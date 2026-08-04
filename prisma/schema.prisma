@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum DominantFoot {
+  IZQUIERDO
+  DERECHO
+  AMBOS
+}
+
+enum AttendanceStatus {
+  CONFIRMADO
+  AUSENTE
+  PENDIENTE
+}
+
+enum MatchStatus {
+  PROGRAMADO
+  JUGADO
+  CANCELADO
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model Player {
+  id                String            @id @default(cuid())
+  name              String
+  nickname          String?
+  position          String?
+  secondaryPosition String?
+  birthDate         DateTime?
+  dominantFoot      DominantFoot?
+  phone             String?
+  active            Boolean           @default(true)
+  activationDate    DateTime?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  attendances       TrainingAttendance[]
+}
+
+model Rival {
+  id        String   @id @default(cuid())
+  name      String
+  notes     String?
+  createdAt DateTime @default(now())
+  matches   Match[]
+}
+
+model Training {
+  id          String                @id @default(cuid())
+  date        DateTime
+  exercise    String?
+  duration    Int?
+  notes       String?
+  createdAt   DateTime              @default(now())
+  attendances TrainingAttendance[]
+}
+
+model TrainingAttendance {
+  id         String           @id @default(cuid())
+  trainingId String
+  playerId   String
+  status     AttendanceStatus @default(PENDIENTE)
+  training   Training         @relation(fields: [trainingId], references: [id], onDelete: Cascade)
+  player     Player           @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([trainingId, playerId])
+}
+
+model Match {
+  id         String      @id @default(cuid())
+  rivalId    String
+  date       DateTime
+  isHome     Boolean     @default(true)
+  ourScore   Int?
+  rivalScore Int?
+  status     MatchStatus @default(PROGRAMADO)
+  notes      String?
+  createdAt  DateTime    @default(now())
+  rival      Rival       @relation(fields: [rivalId], references: [id], onDelete: Restrict)
+}
