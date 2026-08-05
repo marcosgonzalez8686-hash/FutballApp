@@ -12,8 +12,6 @@ const navItems = [
   { href: "/entrenamientos", label: "Entrenamientos" },
   { href: "/partidos", label: "Partidos" },
   { href: "/rivales", label: "Rivales" },
-  { href: "/usuarios", label: "Usuarios" },
-  { href: "/ajustes", label: "Ajustes" },
 ];
 
 export default function AppLayout({ children }: { children: ReactNode }) {
@@ -22,19 +20,27 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       <header className="border-b border-gray-200 bg-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
           <span className="font-semibold text-gray-900">Club Fútbol</span>
-          <form
-            action={async () => {
-              "use server";
-              await signOut({ redirectTo: "/login" });
-            }}
-          >
-            <button
-              type="submit"
+          <div className="flex items-center gap-4">
+            <Link
+              href="/ajustes"
               className="text-sm text-gray-500 hover:text-gray-900"
             >
-              Salir
-            </button>
-          </form>
+              Ajustes
+            </Link>
+            <form
+              action={async () => {
+                "use server";
+                await signOut({ redirectTo: "/login" });
+              }}
+            >
+              <button
+                type="submit"
+                className="text-sm text-gray-500 hover:text-gray-900"
+              >
+                Salir
+              </button>
+            </form>
+          </div>
         </div>
         <nav className="mx-auto flex max-w-5xl gap-1 overflow-x-auto px-4 pb-2 text-sm">
           {navItems.map((item) => (
