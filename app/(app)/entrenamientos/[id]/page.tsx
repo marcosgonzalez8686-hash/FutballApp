@@ -53,6 +53,13 @@ export default async function EntrenamientoDetailPage({
           <p className="font-medium text-gray-900">Asistencia</p>
           <p className="text-sm text-gray-500">Confirmar quién viene</p>
         </Link>
+        <Link
+          href={`/entrenamientos/${id}/material`}
+          className="rounded-lg border border-gray-200 bg-white p-4 hover:border-green-600"
+        >
+          <p className="font-medium text-gray-900">Lista material</p>
+          <p className="text-sm text-gray-500">Marcar lo ya cogido</p>
+        </Link>
       </div>
 
       <form action={deleteTrainingWithId} className="max-w-lg">

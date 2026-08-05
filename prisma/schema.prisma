@@ -90,16 +90,18 @@ model Training {
   duration    Int?
   notes       String?
   createdAt   DateTime              @default(now())
-  attendances TrainingAttendance[]
-  exercises   TrainingExercise[]
+  attendances    TrainingAttendance[]
+  exercises      TrainingExercise[]
+  materialChecks TrainingMaterialCheck[]
 }
 
 model Material {
-  id        String             @id @default(cuid())
-  name      String
-  quantity  Int?
-  createdAt DateTime           @default(now())
-  exercises ExerciseMaterial[]
+  id             String                  @id @default(cuid())
+  name           String
+  quantity       Int?
+  createdAt      DateTime                @default(now())
+  exercises      ExerciseMaterial[]
+  trainingChecks TrainingMaterialCheck[]
 }
 
 model Exercise {
@@ -132,6 +134,17 @@ model TrainingExercise {
   duration   Int?
   training   Training  @relation(fields: [trainingId], references: [id], onDelete: Cascade)
   exercise   Exercise? @relation(fields: [exerciseId], references: [id], onDelete: SetNull)
+}
+
+model TrainingMaterialCheck {
+  id         String   @id @default(cuid())
+  trainingId String
+  materialId String
+  collected  Boolean  @default(false)
+  training   Training @relation(fields: [trainingId], references: [id], onDelete: Cascade)
+  material   Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+
+  @@unique([trainingId, materialId])
 }
 
 model TrainingAttendance {

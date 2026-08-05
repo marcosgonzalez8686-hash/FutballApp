@@ -110,3 +110,19 @@ export async function removeTrainingExercise(
   revalidatePath(`/entrenamientos/${trainingId}/ejercicios`);
   revalidatePath(`/entrenamientos/${trainingId}`);
 }
+
+export async function toggleMaterialCollected(
+  trainingId: string,
+  materialId: string,
+  formData: FormData
+) {
+  const collected = formData.has("collected");
+
+  await prisma.trainingMaterialCheck.upsert({
+    where: { trainingId_materialId: { trainingId, materialId } },
+    update: { collected },
+    create: { trainingId, materialId, collected },
+  });
+
+  revalidatePath(`/entrenamientos/${trainingId}/material`);
+}
