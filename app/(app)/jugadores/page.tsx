@@ -28,7 +28,6 @@ export default async function JugadoresPage() {
                 <th className="px-4 py-2 font-medium">Nombre</th>
                 <th className="px-4 py-2 font-medium">Posición</th>
                 <th className="px-4 py-2 font-medium">Teléfono</th>
-                <th className="px-4 py-2 font-medium">Estado</th>
               </tr>
             </thead>
             <tbody>
@@ -52,17 +51,6 @@ export default async function JugadoresPage() {
                   </td>
                   <td className="px-4 py-2 text-gray-600">
                     {player.phone ?? "-"}
-                  </td>
-                  <td className="px-4 py-2">
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                        player.active
-                          ? "bg-green-100 text-green-700"
-                          : "bg-gray-100 text-gray-500"
-                      }`}
-                    >
-                      {player.active ? "Activo" : "Inactivo"}
-                    </span>
                   </td>
                 </tr>
               ))}

@@ -7,7 +7,6 @@ import type { DominantFoot } from "@/app/generated/prisma/enums";
 
 function parsePlayerForm(formData: FormData) {
   const birthDate = formData.get("birthDate") as string;
-  const activationDate = formData.get("activationDate") as string;
   const dominantFoot = formData.get("dominantFoot") as string;
 
   return {
@@ -18,8 +17,6 @@ function parsePlayerForm(formData: FormData) {
     birthDate: birthDate ? new Date(birthDate) : null,
     dominantFoot: dominantFoot ? (dominantFoot as DominantFoot) : null,
     phone: (formData.get("phone") as string) || null,
-    active: formData.get("active") === "on",
-    activationDate: activationDate ? new Date(activationDate) : null,
   };
 }
 

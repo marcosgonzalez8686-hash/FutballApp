@@ -45,8 +45,6 @@ model Player {
   birthDate         DateTime?
   dominantFoot      DominantFoot?
   phone             String?
-  active            Boolean           @default(true)
-  activationDate    DateTime?
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
   attendances       TrainingAttendance[]

@@ -5,7 +5,7 @@ import { formatDateTime } from "@/lib/format";
 export default async function DashboardPage() {
   const now = new Date();
 
-  const [nextTraining, nextMatch, activePlayers, rivalCount] =
+  const [nextTraining, nextMatch, playerCount, rivalCount] =
     await Promise.all([
       prisma.training.findFirst({
         where: { date: { gte: now } },
@@ -16,7 +16,7 @@ export default async function DashboardPage() {
         orderBy: { date: "asc" },
         include: { rival: true },
       }),
-      prisma.player.count({ where: { active: true } }),
+      prisma.player.count(),
       prisma.rival.count(),
     ]);
 
@@ -86,9 +86,9 @@ export default async function DashboardPage() {
           className="rounded-lg border border-gray-200 bg-white p-4 hover:border-green-600"
         >
           <p className="text-2xl font-semibold text-gray-900">
-            {activePlayers}
+            {playerCount}
           </p>
-          <p className="text-sm text-gray-500">Jugadores activos</p>
+          <p className="text-sm text-gray-500">Jugadores registrados</p>
         </Link>
         <Link
           href="/rivales"

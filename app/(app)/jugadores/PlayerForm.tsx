@@ -98,47 +98,18 @@ export function PlayerForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-            Teléfono
-          </label>
-          <input
-            id="phone"
-            name="phone"
-            type="tel"
-            defaultValue={player?.phone ?? ""}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none"
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="activationDate"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Fecha de activación
-          </label>
-          <input
-            id="activationDate"
-            name="activationDate"
-            type="date"
-            defaultValue={
-              player?.activationDate ? toDateInputValue(player.activationDate) : ""
-            }
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none"
-          />
-        </div>
-      </div>
-
-      <label className="flex items-center gap-2 text-sm text-gray-700">
+      <div>
+        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+          Teléfono
+        </label>
         <input
-          type="checkbox"
-          name="active"
-          defaultChecked={player?.active ?? true}
-          className="h-4 w-4 rounded border-gray-300"
+          id="phone"
+          name="phone"
+          type="tel"
+          defaultValue={player?.phone ?? ""}
+          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none"
         />
-        Jugador activo
-      </label>
+      </div>
 
       <button
         type="submit"
