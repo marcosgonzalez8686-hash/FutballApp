@@ -98,17 +98,32 @@ export function PlayerForm({
         </div>
       </div>
 
-      <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-          Teléfono
-        </label>
-        <input
-          id="phone"
-          name="phone"
-          type="tel"
-          defaultValue={player?.phone ?? ""}
-          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none"
-        />
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+            Teléfono
+          </label>
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            defaultValue={player?.phone ?? ""}
+            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none"
+          />
+        </div>
+        <div>
+          <label htmlFor="club" className="block text-sm font-medium text-gray-700">
+            Club
+          </label>
+          <input
+            id="club"
+            name="club"
+            type="text"
+            defaultValue={player?.club ?? ""}
+            placeholder="Vacío si es de tu club"
+            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none"
+          />
+        </div>
       </div>
 
       <button

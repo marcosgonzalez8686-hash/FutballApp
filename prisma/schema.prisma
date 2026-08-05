@@ -45,9 +45,27 @@ model Player {
   birthDate         DateTime?
   dominantFoot      DominantFoot?
   phone             String?
+  club              String?
+  inSquad           Boolean           @default(true)
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
   attendances       TrainingAttendance[]
+}
+
+model Coach {
+  id        String   @id @default(cuid())
+  name      String
+  club      String?
+  formation String?
+  notes     String?
+  createdAt DateTime @default(now())
+}
+
+model Referee {
+  id        String   @id @default(cuid())
+  name      String
+  notes     String?
+  createdAt DateTime @default(now())
 }
 
 model Rival {

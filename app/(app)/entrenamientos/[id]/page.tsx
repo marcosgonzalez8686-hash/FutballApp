@@ -16,6 +16,7 @@ export default async function EntrenamientoDetailPage({
       include: { attendances: true },
     }),
     prisma.player.findMany({
+      where: { inSquad: true },
       orderBy: { name: "asc" },
     }),
   ]);
@@ -49,7 +50,7 @@ export default async function EntrenamientoDetailPage({
           Asistencia
         </h2>
         {players.length === 0 ? (
-          <p className="text-sm text-gray-400">No hay jugadores.</p>
+          <p className="text-sm text-gray-400">No hay jugadores en la plantilla.</p>
         ) : (
           <form action={saveAttendanceWithId} className="flex flex-col gap-3">
             {players.map((player) => (

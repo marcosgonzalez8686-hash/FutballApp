@@ -1,7 +1,7 @@
-import { PlayerForm } from "../PlayerForm";
+import { PlayerForm } from "@/components/PlayerForm";
 import { createPlayer } from "../actions";
 
-export default function NuevoJugadorPage() {
+export default function NuevoJugadorPlantillaPage() {
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-2xl font-semibold text-gray-900">Nuevo jugador</h1>

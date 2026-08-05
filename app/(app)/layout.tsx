@@ -8,10 +8,11 @@ export const dynamic = "force-dynamic";
 
 const navItems = [
   { href: "/", label: "Inicio" },
-  { href: "/jugadores", label: "Jugadores" },
+  { href: "/plantilla", label: "Plantilla" },
   { href: "/entrenamientos", label: "Entrenamientos" },
   { href: "/partidos", label: "Partidos" },
   { href: "/rivales", label: "Rivales" },
+  { href: "/base-datos", label: "Base de datos" },
 ];
 
 export default function AppLayout({ children }: { children: ReactNode }) {

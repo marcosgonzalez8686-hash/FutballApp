@@ -16,7 +16,7 @@ export default async function DashboardPage() {
         orderBy: { date: "asc" },
         include: { rival: true },
       }),
-      prisma.player.count(),
+      prisma.player.count({ where: { inSquad: true } }),
       prisma.rival.count(),
     ]);
 
@@ -82,13 +82,13 @@ export default async function DashboardPage() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Link
-          href="/jugadores"
+          href="/plantilla"
           className="rounded-lg border border-gray-200 bg-white p-4 hover:border-green-600"
         >
           <p className="text-2xl font-semibold text-gray-900">
             {playerCount}
           </p>
-          <p className="text-sm text-gray-500">Jugadores registrados</p>
+          <p className="text-sm text-gray-500">Jugadores en plantilla</p>
         </Link>
         <Link
           href="/rivales"
