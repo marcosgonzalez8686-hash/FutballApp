@@ -45,12 +45,13 @@ export default async function AsistenciaSesionPage({
                 <span className="text-sm text-gray-900">{player.name}</span>
                 <select
                   name={`status-${player.id}`}
-                  defaultValue={attendanceByPlayer.get(player.id) ?? "PENDIENTE"}
+                  defaultValue={attendanceByPlayer.get(player.id) ?? "CONFIRMADO"}
                   className="rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-green-600 focus:outline-none"
                 >
-                  <option value="PENDIENTE">Pendiente</option>
                   <option value="CONFIRMADO">Confirmado</option>
-                  <option value="AUSENTE">Ausente</option>
+                  <option value="AUSENCIA_JUSTIFICADA">Ausencia justificada</option>
+                  <option value="AUSENCIA_NO_JUSTIFICADA">Ausencia no justificada</option>
+                  <option value="TARDE">Llega tarde</option>
                 </select>
               </div>
             ))}

@@ -18,8 +18,9 @@ enum DominantFoot {
 
 enum AttendanceStatus {
   CONFIRMADO
-  AUSENTE
-  PENDIENTE
+  AUSENCIA_JUSTIFICADA
+  AUSENCIA_NO_JUSTIFICADA
+  TARDE
 }
 
 enum MatchStatus {
@@ -130,7 +131,7 @@ model TrainingAttendance {
   id         String           @id @default(cuid())
   trainingId String
   playerId   String
-  status     AttendanceStatus @default(PENDIENTE)
+  status     AttendanceStatus @default(CONFIRMADO)
   training   Training         @relation(fields: [trainingId], references: [id], onDelete: Cascade)
   player     Player           @relation(fields: [playerId], references: [id], onDelete: Cascade)
 
