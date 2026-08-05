@@ -48,6 +48,22 @@ export function MatchForm({
         />
       </div>
 
+      <div>
+        <label htmlFor="competition" className="block text-sm font-medium text-gray-700">
+          Competición
+        </label>
+        <select
+          id="competition"
+          name="competition"
+          defaultValue={match?.competition ?? "LIGA"}
+          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none"
+        >
+          <option value="AMISTOSO">Amistoso</option>
+          <option value="LIGA">Liga</option>
+          <option value="COPA">Copa</option>
+        </select>
+      </div>
+
       <fieldset>
         <legend className="block text-sm font-medium text-gray-700">
           Condición

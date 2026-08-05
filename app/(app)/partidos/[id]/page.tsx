@@ -1,7 +1,20 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { MatchForm } from "../MatchForm";
-import { updateMatch, deleteMatch } from "../actions";
+import { formatDateTime } from "@/lib/format";
+import { deleteMatch } from "../actions";
+
+const competitionLabels = {
+  AMISTOSO: "Amistoso",
+  LIGA: "Liga",
+  COPA: "Copa",
+};
+
+const statusLabels = {
+  PROGRAMADO: "Programado",
+  JUGADO: "Jugado",
+  CANCELADO: "Cancelado",
+};
 
 export default async function PartidoDetailPage({
   params,
@@ -10,24 +23,50 @@ export default async function PartidoDetailPage({
 }) {
   const { id } = await params;
 
-  const [match, rivals] = await Promise.all([
+  const [match, calledCount] = await Promise.all([
     prisma.match.findUnique({ where: { id }, include: { rival: true } }),
-    prisma.rival.findMany({ orderBy: { name: "asc" } }),
+    prisma.matchCallup.count({ where: { matchId: id, called: true } }),
   ]);
 
   if (!match) notFound();
 
-  const updateMatchWithId = updateMatch.bind(null, id);
   const deleteMatchWithId = deleteMatch.bind(null, id);
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold text-gray-900">
-        vs {match.rival.name}
-      </h1>
-      <div className="max-w-lg rounded-lg border border-gray-200 bg-white p-6">
-        <MatchForm match={match} rivals={rivals} action={updateMatchWithId} />
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900">
+          {match.isHome ? "vs" : "@"} {match.rival.name}
+        </h2>
+        <p className="text-sm text-gray-500">
+          {formatDateTime(match.date)} · {competitionLabels[match.competition]} ·{" "}
+          {statusLabels[match.status]}
+          {match.status === "JUGADO" &&
+            match.ourScore !== null &&
+            match.rivalScore !== null &&
+            ` · ${match.ourScore} - ${match.rivalScore}`}
+        </p>
+        <p className="text-sm text-gray-500">{calledCount} convocados</p>
+        {match.notes && <p className="mt-1 text-sm text-gray-500">{match.notes}</p>}
       </div>
+
+      <div className="grid max-w-lg gap-3 sm:grid-cols-2">
+        <Link
+          href={`/partidos/${id}/editar`}
+          className="rounded-lg border border-gray-200 bg-white p-4 hover:border-green-600"
+        >
+          <p className="font-medium text-gray-900">Editar</p>
+          <p className="text-sm text-gray-500">Rival, fecha, resultado...</p>
+        </Link>
+        <Link
+          href={`/partidos/${id}/convocatoria`}
+          className="rounded-lg border border-gray-200 bg-white p-4 hover:border-green-600"
+        >
+          <p className="font-medium text-gray-900">Convocatoria</p>
+          <p className="text-sm text-gray-500">Marcar jugadores convocados</p>
+        </Link>
+      </div>
+
       <form action={deleteMatchWithId} className="max-w-lg">
         <button type="submit" className="text-sm text-red-600 hover:underline">
           Eliminar partido

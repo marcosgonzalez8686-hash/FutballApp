@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import type { MatchStatus } from "@/app/generated/prisma/enums";
+import type { MatchStatus, Competition } from "@/app/generated/prisma/enums";
 
 function parseMatchForm(formData: FormData) {
   const ourScore = formData.get("ourScore") as string;
@@ -13,6 +13,7 @@ function parseMatchForm(formData: FormData) {
     rivalId: formData.get("rivalId") as string,
     date: new Date(formData.get("date") as string),
     isHome: formData.get("isHome") === "true",
+    competition: formData.get("competition") as Competition,
     ourScore: ourScore ? parseInt(ourScore, 10) : null,
     rivalScore: rivalScore ? parseInt(rivalScore, 10) : null,
     status: formData.get("status") as MatchStatus,
@@ -22,9 +23,9 @@ function parseMatchForm(formData: FormData) {
 
 export async function createMatch(formData: FormData) {
   const data = parseMatchForm(formData);
-  await prisma.match.create({ data });
+  const match = await prisma.match.create({ data });
   revalidatePath("/partidos");
-  redirect("/partidos");
+  redirect(`/partidos/${match.id}`);
 }
 
 export async function updateMatch(id: string, formData: FormData) {
@@ -39,4 +40,29 @@ export async function deleteMatch(id: string) {
   await prisma.match.delete({ where: { id } });
   revalidatePath("/partidos");
   redirect("/partidos");
+}
+
+export async function saveCallups(matchId: string, formData: FormData) {
+  const playerIds = Array.from(formData.entries())
+    .filter(([key]) => key.startsWith("called-"))
+    .map(([key]) => key.replace("called-", ""));
+
+  const players = await prisma.player.findMany({
+    where: { inSquad: true },
+    select: { id: true },
+  });
+
+  await Promise.all(
+    players.map((player) =>
+      prisma.matchCallup.upsert({
+        where: { matchId_playerId: { matchId, playerId: player.id } },
+        update: { called: playerIds.includes(player.id) },
+        create: { matchId, playerId: player.id, called: playerIds.includes(player.id) },
+      })
+    )
+  );
+
+  revalidatePath(`/partidos/${matchId}/convocatoria`);
+  revalidatePath(`/partidos/${matchId}`);
+  redirect(`/partidos/${matchId}`);
 }

@@ -29,6 +29,12 @@ enum MatchStatus {
   CANCELADO
 }
 
+enum Competition {
+  AMISTOSO
+  LIGA
+  COPA
+}
+
 model User {
   id           String   @id @default(cuid())
   name         String
@@ -51,6 +57,7 @@ model Player {
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
   attendances       TrainingAttendance[]
+  callups           MatchCallup[]
 }
 
 model Coach {
@@ -139,14 +146,27 @@ model TrainingAttendance {
 }
 
 model Match {
-  id         String      @id @default(cuid())
-  rivalId    String
-  date       DateTime
-  isHome     Boolean     @default(true)
-  ourScore   Int?
-  rivalScore Int?
-  status     MatchStatus @default(PROGRAMADO)
-  notes      String?
-  createdAt  DateTime    @default(now())
-  rival      Rival       @relation(fields: [rivalId], references: [id], onDelete: Restrict)
+  id          String      @id @default(cuid())
+  rivalId     String
+  date        DateTime
+  isHome      Boolean     @default(true)
+  competition Competition @default(LIGA)
+  ourScore    Int?
+  rivalScore  Int?
+  status      MatchStatus @default(PROGRAMADO)
+  notes       String?
+  createdAt   DateTime    @default(now())
+  rival       Rival       @relation(fields: [rivalId], references: [id], onDelete: Restrict)
+  callups     MatchCallup[]
+}
+
+model MatchCallup {
+  id       String  @id @default(cuid())
+  matchId  String
+  playerId String
+  called   Boolean @default(false)
+  match    Match   @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  player   Player  @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([matchId, playerId])
 }
