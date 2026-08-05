@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { PositionBadge } from "@/components/PositionBadge";
 
 export default async function PlantillaPage() {
   const players = await prisma.player.findMany({
@@ -47,8 +48,8 @@ export default async function PlantillaPage() {
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-2 text-gray-600">
-                    {player.position ?? "-"}
+                  <td className="px-4 py-2">
+                    <PositionBadge position={player.position} />
                   </td>
                   <td className="px-4 py-2 text-gray-600">
                     {player.phone ?? "-"}

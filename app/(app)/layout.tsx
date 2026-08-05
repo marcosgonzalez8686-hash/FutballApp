@@ -17,14 +17,16 @@ const navItems = [
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50">
-      <header className="border-b border-gray-200 bg-white">
+    <div className="pitch-bg flex min-h-screen flex-col">
+      <header className="pitch-header shadow-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-          <span className="font-semibold text-gray-900">Club Fútbol</span>
+          <span className="font-heading text-xl font-semibold tracking-wide text-white">
+            ⚽ Club Fútbol
+          </span>
           <div className="flex items-center gap-4">
             <Link
               href="/ajustes"
-              className="text-sm text-gray-500 hover:text-gray-900"
+              className="text-sm text-green-100 hover:text-white"
             >
               Ajustes
             </Link>
@@ -36,7 +38,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             >
               <button
                 type="submit"
-                className="text-sm text-gray-500 hover:text-gray-900"
+                className="text-sm text-green-100 hover:text-white"
               >
                 Salir
               </button>
@@ -48,12 +50,13 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             <Link
               key={item.href}
               href={item.href}
-              className="whitespace-nowrap rounded-md px-3 py-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+              className="whitespace-nowrap rounded-md px-3 py-1.5 font-medium text-green-50 hover:bg-white/15 hover:text-white"
             >
               {item.label}
             </Link>
           ))}
         </nav>
+        <div className="h-1 bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400" />
       </header>
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
         {children}

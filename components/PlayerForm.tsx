@@ -1,4 +1,5 @@
 import { toDateInputValue } from "@/lib/format";
+import { PLAYER_POSITIONS } from "@/lib/positions";
 import type { Player } from "@/app/generated/prisma/client";
 
 export function PlayerForm({
@@ -42,13 +43,19 @@ export function PlayerForm({
           <label htmlFor="position" className="block text-sm font-medium text-gray-700">
             Posición
           </label>
-          <input
+          <select
             id="position"
             name="position"
-            type="text"
             defaultValue={player?.position ?? ""}
             className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none"
-          />
+          >
+            <option value="">Sin especificar</option>
+            {PLAYER_POSITIONS.map((pos) => (
+              <option key={pos} value={pos}>
+                {pos}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <label
@@ -57,13 +64,19 @@ export function PlayerForm({
           >
             Posición secundaria
           </label>
-          <input
+          <select
             id="secondaryPosition"
             name="secondaryPosition"
-            type="text"
             defaultValue={player?.secondaryPosition ?? ""}
             className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none"
-          />
+          >
+            <option value="">Sin especificar</option>
+            {PLAYER_POSITIONS.map((pos) => (
+              <option key={pos} value={pos}>
+                {pos}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 

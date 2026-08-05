@@ -11,10 +11,41 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-heading);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading), sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.pitch-bg {
+  background-color: #f3f9f5;
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(21, 128, 61, 0.05) 0px,
+    rgba(21, 128, 61, 0.05) 36px,
+    transparent 36px,
+    transparent 72px
+  );
+}
+
+.pitch-header {
+  background-image:
+    linear-gradient(to right, #14532d, #166534 55%, #15803d),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05) 0px,
+      rgba(255, 255, 255, 0.05) 24px,
+      transparent 24px,
+      transparent 48px
+    );
 }
