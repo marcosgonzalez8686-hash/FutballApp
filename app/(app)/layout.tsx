@@ -12,6 +12,7 @@ const navItems = [
   { href: "/entrenamientos", label: "Entrenamientos" },
   { href: "/partidos", label: "Partidos" },
   { href: "/rivales", label: "Rivales" },
+  { href: "/usuarios", label: "Usuarios" },
   { href: "/ajustes", label: "Ajustes" },
 ];
 
