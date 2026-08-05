@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { formatDate } from "@/lib/format";
+import { formatDateWithWeekday } from "@/lib/format";
 
 export default async function EntrenamientosPage() {
   const trainings = await prisma.training.findMany({
@@ -32,7 +32,7 @@ export default async function EntrenamientosPage() {
               className="rounded-lg border border-gray-200 bg-white p-4 hover:border-green-600"
             >
               <p className="font-medium text-gray-900">
-                {formatDate(training.date)}
+                {formatDateWithWeekday(training.date)}
               </p>
             </Link>
           ))}

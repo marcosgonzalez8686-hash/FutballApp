@@ -4,6 +4,13 @@ export function formatDate(date: Date | string): string {
   );
 }
 
+export function formatDateWithWeekday(date: Date | string): string {
+  const d = new Date(date);
+  const datePart = new Intl.DateTimeFormat("es-ES", { dateStyle: "medium" }).format(d);
+  const weekday = new Intl.DateTimeFormat("es-ES", { weekday: "long" }).format(d);
+  return `${datePart} (${weekday})`;
+}
+
 export function formatDateTime(date: Date | string): string {
   return new Intl.DateTimeFormat("es-ES", {
     dateStyle: "medium",

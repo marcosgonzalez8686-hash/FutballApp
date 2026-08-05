@@ -25,20 +25,6 @@ export function TrainingForm({
       </div>
 
       <div>
-        <label htmlFor="duration" className="block text-sm font-medium text-gray-700">
-          Duración (minutos)
-        </label>
-        <input
-          id="duration"
-          name="duration"
-          type="number"
-          min={0}
-          defaultValue={training?.duration ?? ""}
-          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none"
-        />
-      </div>
-
-      <div>
         <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
           Notas
         </label>

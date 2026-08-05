@@ -7,20 +7,30 @@ import type { AttendanceStatus } from "@/app/generated/prisma/enums";
 
 function parseTrainingForm(formData: FormData) {
   const date = formData.get("date") as string;
-  const duration = formData.get("duration") as string;
 
   return {
     date: new Date(date),
-    duration: duration ? parseInt(duration, 10) : null,
     notes: (formData.get("notes") as string) || null,
   };
 }
 
+async function recalculateDuration(trainingId: string) {
+  const items = await prisma.trainingExercise.findMany({
+    where: { trainingId },
+    include: { exercise: true },
+  });
+  const total = items.reduce((sum, item) => sum + (item.exercise?.duration ?? 0), 0);
+  await prisma.training.update({
+    where: { id: trainingId },
+    data: { duration: total },
+  });
+}
+
 export async function createTraining(formData: FormData) {
   const data = parseTrainingForm(formData);
-  await prisma.training.create({ data });
+  const training = await prisma.training.create({ data });
   revalidatePath("/entrenamientos");
-  redirect("/entrenamientos");
+  redirect(`/entrenamientos/${training.id}`);
 }
 
 export async function updateTraining(id: string, formData: FormData) {
@@ -53,7 +63,7 @@ export async function saveAttendance(trainingId: string, formData: FormData) {
     })
   );
 
-  revalidatePath(`/entrenamientos/${trainingId}`);
+  revalidatePath(`/entrenamientos/${trainingId}/asistencia`);
   redirect(`/entrenamientos/${trainingId}`);
 }
 
@@ -67,6 +77,8 @@ export async function addCatalogExercise(trainingId: string, formData: FormData)
   await prisma.trainingExercise.create({
     data: { trainingId, exerciseId, name: exercise.name },
   });
+  await recalculateDuration(trainingId);
+  revalidatePath(`/entrenamientos/${trainingId}/ejercicios`);
   revalidatePath(`/entrenamientos/${trainingId}`);
 }
 
@@ -77,6 +89,8 @@ export async function addManualExercise(trainingId: string, formData: FormData) 
   await prisma.trainingExercise.create({
     data: { trainingId, exerciseId: null, name },
   });
+  await recalculateDuration(trainingId);
+  revalidatePath(`/entrenamientos/${trainingId}/ejercicios`);
   revalidatePath(`/entrenamientos/${trainingId}`);
 }
 
@@ -85,5 +99,7 @@ export async function removeTrainingExercise(
   trainingId: string
 ) {
   await prisma.trainingExercise.delete({ where: { id: trainingExerciseId } });
+  await recalculateDuration(trainingId);
+  revalidatePath(`/entrenamientos/${trainingId}/ejercicios`);
   revalidatePath(`/entrenamientos/${trainingId}`);
 }
