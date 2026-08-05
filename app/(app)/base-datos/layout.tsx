@@ -5,6 +5,7 @@ const tabs = [
   { href: "/base-datos/jugadores", label: "Jugadores" },
   { href: "/base-datos/entrenadores", label: "Entrenadores" },
   { href: "/base-datos/arbitros", label: "Árbitros" },
+  { href: "/base-datos/clubes", label: "Clubes" },
 ];
 
 export default function BaseDatosLayout({ children }: { children: ReactNode }) {

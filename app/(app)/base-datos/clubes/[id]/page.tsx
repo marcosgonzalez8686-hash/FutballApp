@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { RivalForm } from "../RivalForm";
+import { ClubForm } from "../ClubForm";
 import { updateRival, deleteRival } from "../actions";
 
-export default async function RivalDetailPage({
+export default async function ClubDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -18,13 +18,13 @@ export default async function RivalDetailPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold text-gray-900">{rival.name}</h1>
+      <h2 className="text-sm font-medium text-gray-500">{rival.name}</h2>
       <div className="max-w-lg rounded-lg border border-gray-200 bg-white p-6">
-        <RivalForm rival={rival} action={updateRivalWithId} />
+        <ClubForm rival={rival} action={updateRivalWithId} />
       </div>
       <form action={deleteRivalWithId} className="max-w-lg">
         <button type="submit" className="text-sm text-red-600 hover:underline">
-          Eliminar rival
+          Eliminar club
         </button>
       </form>
     </div>

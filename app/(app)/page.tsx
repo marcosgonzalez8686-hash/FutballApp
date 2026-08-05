@@ -93,11 +93,11 @@ export default async function DashboardPage() {
           <p className="text-sm text-gray-500">Jugadores en plantilla</p>
         </Link>
         <Link
-          href="/rivales"
+          href="/base-datos/clubes"
           className="rounded-lg border border-gray-200 bg-white p-4 hover:border-green-600"
         >
           <p className="text-2xl font-semibold text-gray-900">{rivalCount}</p>
-          <p className="text-sm text-gray-500">Rivales registrados</p>
+          <p className="text-sm text-gray-500">Clubes registrados</p>
         </Link>
       </div>
     </div>

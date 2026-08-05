@@ -1,6 +1,6 @@
 import type { Rival } from "@/app/generated/prisma/client";
 
-export function RivalForm({
+export function ClubForm({
   rival,
   action,
 }: {
@@ -11,7 +11,7 @@ export function RivalForm({
     <form action={action} className="flex flex-col gap-4">
       <div>
         <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-          Nombre del equipo *
+          Nombre del club *
         </label>
         <input
           id="name"
