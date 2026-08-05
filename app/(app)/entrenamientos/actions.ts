@@ -11,7 +11,6 @@ function parseTrainingForm(formData: FormData) {
 
   return {
     date: new Date(date),
-    exercise: (formData.get("exercise") as string) || null,
     duration: duration ? parseInt(duration, 10) : null,
     notes: (formData.get("notes") as string) || null,
   };
@@ -56,4 +55,35 @@ export async function saveAttendance(trainingId: string, formData: FormData) {
 
   revalidatePath(`/entrenamientos/${trainingId}`);
   redirect(`/entrenamientos/${trainingId}`);
+}
+
+export async function addCatalogExercise(trainingId: string, formData: FormData) {
+  const exerciseId = formData.get("exerciseId") as string;
+  if (!exerciseId) return;
+
+  const exercise = await prisma.exercise.findUnique({ where: { id: exerciseId } });
+  if (!exercise) return;
+
+  await prisma.trainingExercise.create({
+    data: { trainingId, exerciseId, name: exercise.name },
+  });
+  revalidatePath(`/entrenamientos/${trainingId}`);
+}
+
+export async function addManualExercise(trainingId: string, formData: FormData) {
+  const name = (formData.get("manualName") as string)?.trim();
+  if (!name) return;
+
+  await prisma.trainingExercise.create({
+    data: { trainingId, exerciseId: null, name },
+  });
+  revalidatePath(`/entrenamientos/${trainingId}`);
+}
+
+export async function removeTrainingExercise(
+  trainingExerciseId: string,
+  trainingId: string
+) {
+  await prisma.trainingExercise.delete({ where: { id: trainingExerciseId } });
+  revalidatePath(`/entrenamientos/${trainingId}`);
 }

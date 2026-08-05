@@ -79,11 +79,50 @@ model Rival {
 model Training {
   id          String                @id @default(cuid())
   date        DateTime
-  exercise    String?
   duration    Int?
   notes       String?
   createdAt   DateTime              @default(now())
   attendances TrainingAttendance[]
+  exercises   TrainingExercise[]
+}
+
+model Material {
+  id        String             @id @default(cuid())
+  name      String
+  quantity  Int?
+  createdAt DateTime           @default(now())
+  exercises ExerciseMaterial[]
+}
+
+model Exercise {
+  id          String             @id @default(cuid())
+  name        String
+  duration    Int?
+  explanation String?
+  imageUrl    String?
+  imageUrl2   String?
+  createdAt   DateTime           @default(now())
+  materials   ExerciseMaterial[]
+  sessions    TrainingExercise[]
+}
+
+model ExerciseMaterial {
+  id         String   @id @default(cuid())
+  exerciseId String
+  materialId String
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  material   Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+
+  @@unique([exerciseId, materialId])
+}
+
+model TrainingExercise {
+  id         String    @id @default(cuid())
+  trainingId String
+  exerciseId String?
+  name       String
+  training   Training  @relation(fields: [trainingId], references: [id], onDelete: Cascade)
+  exercise   Exercise? @relation(fields: [exerciseId], references: [id], onDelete: SetNull)
 }
 
 model TrainingAttendance {

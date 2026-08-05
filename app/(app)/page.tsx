@@ -10,6 +10,7 @@ export default async function DashboardPage() {
       prisma.training.findFirst({
         where: { date: { gte: now } },
         orderBy: { date: "asc" },
+        include: { exercises: true },
       }),
       prisma.match.findFirst({
         where: { date: { gte: now }, status: "PROGRAMADO" },
@@ -34,9 +35,9 @@ export default async function DashboardPage() {
               <p className="text-gray-900">
                 {formatDateTime(nextTraining.date)}
               </p>
-              {nextTraining.exercise && (
+              {nextTraining.exercises.length > 0 && (
                 <p className="text-sm text-gray-500">
-                  {nextTraining.exercise}
+                  {nextTraining.exercises.map((e) => e.name).join(", ")}
                 </p>
               )}
               <Link

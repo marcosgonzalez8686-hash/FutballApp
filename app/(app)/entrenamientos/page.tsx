@@ -8,9 +8,9 @@ export default async function EntrenamientosPage() {
   });
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-gray-900">Entrenamientos</h1>
+        <h2 className="text-sm font-medium text-gray-500">Sesiones</h2>
         <Link
           href="/entrenamientos/nuevo"
           className="rounded-md bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-800"
@@ -34,9 +34,6 @@ export default async function EntrenamientosPage() {
               <p className="font-medium text-gray-900">
                 {formatDateTime(training.date)}
               </p>
-              {training.exercise && (
-                <p className="text-sm text-gray-500">{training.exercise}</p>
-              )}
             </Link>
           ))}
         </div>
