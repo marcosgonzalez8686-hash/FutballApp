@@ -5,6 +5,7 @@ import { formatDateWithWeekday } from "@/lib/format";
 export default async function EntrenamientosPage() {
   const trainings = await prisma.training.findMany({
     orderBy: { date: "desc" },
+    include: { _count: { select: { exercises: true } } },
   });
 
   return (
@@ -33,6 +34,11 @@ export default async function EntrenamientosPage() {
             >
               <p className="font-medium text-gray-900">
                 {formatDateWithWeekday(training.date)}
+              </p>
+              <p className="text-sm text-gray-500">
+                {training._count.exercises}{" "}
+                {training._count.exercises === 1 ? "ejercicio" : "ejercicios"}{" "}
+                · {training.duration ?? 0} min
               </p>
             </Link>
           ))}
