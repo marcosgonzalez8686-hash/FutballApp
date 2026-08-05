@@ -17,9 +17,8 @@ function parseTrainingForm(formData: FormData) {
 async function recalculateDuration(trainingId: string) {
   const items = await prisma.trainingExercise.findMany({
     where: { trainingId },
-    include: { exercise: true },
   });
-  const total = items.reduce((sum, item) => sum + (item.exercise?.duration ?? 0), 0);
+  const total = items.reduce((sum, item) => sum + (item.duration ?? 0), 0);
   await prisma.training.update({
     where: { id: trainingId },
     data: { duration: total },
@@ -75,7 +74,12 @@ export async function addCatalogExercise(trainingId: string, formData: FormData)
   if (!exercise) return;
 
   await prisma.trainingExercise.create({
-    data: { trainingId, exerciseId, name: exercise.name },
+    data: {
+      trainingId,
+      exerciseId,
+      name: exercise.name,
+      duration: exercise.duration,
+    },
   });
   await recalculateDuration(trainingId);
   revalidatePath(`/entrenamientos/${trainingId}/ejercicios`);
@@ -86,8 +90,11 @@ export async function addManualExercise(trainingId: string, formData: FormData) 
   const name = (formData.get("manualName") as string)?.trim();
   if (!name) return;
 
+  const durationRaw = formData.get("manualDuration") as string;
+  const duration = durationRaw ? parseInt(durationRaw, 10) : null;
+
   await prisma.trainingExercise.create({
-    data: { trainingId, exerciseId: null, name },
+    data: { trainingId, exerciseId: null, name, duration },
   });
   await recalculateDuration(trainingId);
   revalidatePath(`/entrenamientos/${trainingId}/ejercicios`);

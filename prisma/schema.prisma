@@ -121,6 +121,7 @@ model TrainingExercise {
   trainingId String
   exerciseId String?
   name       String
+  duration   Int?
   training   Training  @relation(fields: [trainingId], references: [id], onDelete: Cascade)
   exercise   Exercise? @relation(fields: [exerciseId], references: [id], onDelete: SetNull)
 }

@@ -55,7 +55,10 @@ export default async function EjerciciosSesionPage({
                   key={te.id}
                   className="flex items-center justify-between gap-4 rounded-md border border-gray-100 px-3 py-2"
                 >
-                  <span className="text-sm text-gray-900">{te.name}</span>
+                  <span className="text-sm text-gray-900">
+                    {te.name}
+                    {te.duration ? ` (${te.duration} min)` : ""}
+                  </span>
                   <form action={removeWithIds}>
                     <button
                       type="submit"
@@ -105,6 +108,13 @@ export default async function EjerciciosSesionPage({
               required
               placeholder="Añadir ejercicio manual"
               className="flex-1 rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-green-600 focus:outline-none"
+            />
+            <input
+              type="number"
+              name="manualDuration"
+              min={0}
+              placeholder="min"
+              className="w-16 rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-green-600 focus:outline-none"
             />
             <button
               type="submit"
