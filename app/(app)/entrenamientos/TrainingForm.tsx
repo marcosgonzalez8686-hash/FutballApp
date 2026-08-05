@@ -1,4 +1,4 @@
-import { toDateTimeLocalValue } from "@/lib/format";
+import { toDateInputValue } from "@/lib/format";
 import type { Training } from "@/app/generated/prisma/client";
 
 export function TrainingForm({
@@ -12,14 +12,14 @@ export function TrainingForm({
     <form action={action} className="flex flex-col gap-4">
       <div>
         <label htmlFor="date" className="block text-sm font-medium text-gray-700">
-          Fecha y hora *
+          Fecha *
         </label>
         <input
           id="date"
           name="date"
-          type="datetime-local"
+          type="date"
           required
-          defaultValue={training?.date ? toDateTimeLocalValue(training.date) : ""}
+          defaultValue={training?.date ? toDateInputValue(training.date) : ""}
           className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none"
         />
       </div>

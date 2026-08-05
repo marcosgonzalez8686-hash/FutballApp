@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { formatDateTime } from "@/lib/format";
+import { formatDate, formatDateTime } from "@/lib/format";
 
 export default async function DashboardPage() {
   const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
   const [nextTraining, nextMatch, playerCount, rivalCount] =
     await Promise.all([
       prisma.training.findFirst({
-        where: { date: { gte: now } },
+        where: { date: { gte: today } },
         orderBy: { date: "asc" },
         include: { exercises: true },
       }),
@@ -33,7 +34,7 @@ export default async function DashboardPage() {
           {nextTraining ? (
             <div className="mt-2">
               <p className="text-gray-900">
-                {formatDateTime(nextTraining.date)}
+                {formatDate(nextTraining.date)}
               </p>
               {nextTraining.exercises.length > 0 && (
                 <p className="text-sm text-gray-500">
