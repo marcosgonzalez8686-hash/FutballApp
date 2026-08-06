@@ -20,7 +20,7 @@ export default async function JugadorPlantillaDetailPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="text-sm font-medium text-gray-500">{player.name}</h2>
+      <h1 className="text-2xl font-semibold text-gray-900">{player.name}</h1>
       <div className="max-w-lg rounded-lg border border-gray-200 bg-white p-6">
         <PlayerForm player={player} action={updatePlayerWithId} />
       </div>

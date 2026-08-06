@@ -24,9 +24,10 @@ export default async function PartidoDetailPage({
 }) {
   const { id } = await params;
 
-  const [match, calledCount] = await Promise.all([
+  const [match, calledCount, unavailableCount] = await Promise.all([
     prisma.match.findUnique({ where: { id }, include: { rival: true } }),
     prisma.matchCallup.count({ where: { matchId: id, called: true } }),
+    prisma.matchCallup.count({ where: { matchId: id, unavailable: true } }),
   ]);
 
   if (!match) notFound();
@@ -47,7 +48,10 @@ export default async function PartidoDetailPage({
             match.rivalScore !== null &&
             ` · ${match.ourScore} - ${match.rivalScore}`}
         </p>
-        <p className="text-sm text-gray-500">{calledCount} convocados</p>
+        <p className="text-sm text-gray-500">
+          {calledCount} convocados
+          {unavailableCount > 0 && ` · ${unavailableCount} no disponibles`}
+        </p>
         {match.notes && <p className="mt-1 text-sm text-gray-500">{match.notes}</p>}
       </div>
 
@@ -65,6 +69,15 @@ export default async function PartidoDetailPage({
         >
           <p className="font-medium text-gray-900">Convocatoria</p>
           <p className="text-sm text-gray-500">Marcar jugadores convocados</p>
+        </Link>
+        <Link
+          href={`/partidos/${id}/no-disponibles`}
+          className="rounded-lg border border-gray-200 bg-white p-4 hover:border-green-600"
+        >
+          <p className="font-medium text-gray-900">No disponibles</p>
+          <p className="text-sm text-gray-500">
+            Quién no puede ir a este partido
+          </p>
         </Link>
       </div>
 

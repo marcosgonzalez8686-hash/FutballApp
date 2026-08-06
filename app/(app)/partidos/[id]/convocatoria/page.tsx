@@ -16,21 +16,23 @@ export default async function ConvocatoriaPage({
       include: { callups: true },
     }),
     prisma.player.findMany({
-      where: { inSquad: true, available: true },
+      where: { inSquad: true },
       orderBy: { name: "asc" },
     }),
   ]);
 
   if (!match) notFound();
 
-  const calledByPlayer = new Map(
-    match.callups.map((c) => [c.playerId, c.called])
+  const callupByPlayer = new Map(match.callups.map((c) => [c.playerId, c]));
+
+  const availablePlayers = players.filter(
+    (player) => !callupByPlayer.get(player.id)?.unavailable
   );
 
-  const playersWithCalled = players.map((player) => ({
+  const playersWithCalled = availablePlayers.map((player) => ({
     id: player.id,
     name: player.name,
-    called: calledByPlayer.get(player.id) ?? false,
+    called: callupByPlayer.get(player.id)?.called ?? false,
   }));
 
   const saveCallupsWithId = saveCallups.bind(null, id);
@@ -40,8 +42,10 @@ export default async function ConvocatoriaPage({
       <h2 className="text-sm font-medium text-gray-500">Convocatoria</h2>
 
       <div className="max-w-lg rounded-lg border border-gray-200 bg-white p-6">
-        {players.length === 0 ? (
-          <p className="text-sm text-gray-400">No hay jugadores en la plantilla.</p>
+        {availablePlayers.length === 0 ? (
+          <p className="text-sm text-gray-400">
+            No hay jugadores disponibles para convocar.
+          </p>
         ) : (
           <ConvocatoriaForm
             players={playersWithCalled}

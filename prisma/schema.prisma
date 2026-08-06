@@ -54,7 +54,6 @@ model Player {
   phone             String?
   club              String?
   inSquad           Boolean           @default(true)
-  available         Boolean           @default(true)
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
   attendances       TrainingAttendance[]
@@ -175,12 +174,13 @@ model Match {
 }
 
 model MatchCallup {
-  id       String  @id @default(cuid())
-  matchId  String
-  playerId String
-  called   Boolean @default(false)
-  match    Match   @relation(fields: [matchId], references: [id], onDelete: Cascade)
-  player   Player  @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  id          String  @id @default(cuid())
+  matchId     String
+  playerId    String
+  called      Boolean @default(false)
+  unavailable Boolean @default(false)
+  match       Match   @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  player      Player  @relation(fields: [playerId], references: [id], onDelete: Cascade)
 
   @@unique([matchId, playerId])
 }

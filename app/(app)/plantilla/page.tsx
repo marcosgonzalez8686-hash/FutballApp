@@ -9,9 +9,9 @@ export default async function PlantillaPage() {
   });
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-medium text-gray-500">Jugadores</h2>
+        <h1 className="text-2xl font-semibold text-gray-900">Plantilla</h1>
         <Link
           href="/plantilla/nuevo"
           className="rounded-md bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-800"
@@ -45,11 +45,6 @@ export default async function PlantillaPage() {
                     {player.nickname && (
                       <span className="ml-1 text-gray-400">
                         &ldquo;{player.nickname}&rdquo;
-                      </span>
-                    )}
-                    {!player.available && (
-                      <span className="ml-2 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
-                        No disponible
                       </span>
                     )}
                   </td>

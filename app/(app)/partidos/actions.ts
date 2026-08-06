@@ -66,3 +66,21 @@ export async function saveCallups(matchId: string, formData: FormData) {
   revalidatePath(`/partidos/${matchId}`);
   redirect(`/partidos/${matchId}`);
 }
+
+export async function toggleMatchUnavailable(
+  matchId: string,
+  playerId: string,
+  formData: FormData
+) {
+  const unavailable = formData.has("unavailable");
+
+  await prisma.matchCallup.upsert({
+    where: { matchId_playerId: { matchId, playerId } },
+    update: unavailable ? { unavailable, called: false } : { unavailable },
+    create: { matchId, playerId, unavailable, called: false },
+  });
+
+  revalidatePath(`/partidos/${matchId}/no-disponibles`);
+  revalidatePath(`/partidos/${matchId}/convocatoria`);
+  revalidatePath(`/partidos/${matchId}`);
+}

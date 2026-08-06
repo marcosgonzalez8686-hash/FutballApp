@@ -26,10 +26,3 @@ export async function removeFromSquad(id: string) {
   revalidatePath("/base-datos/jugadores");
   redirect("/plantilla");
 }
-
-export async function toggleAvailability(playerId: string, formData: FormData) {
-  const available = !formData.has("unavailable");
-  await prisma.player.update({ where: { id: playerId }, data: { available } });
-  revalidatePath("/plantilla");
-  revalidatePath("/plantilla/disponibilidad");
-}
