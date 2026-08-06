@@ -1,6 +1,8 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { ExerciseForm } from "../ExerciseForm";
+import { DeleteButton } from "@/components/DeleteButton";
 import { updateExercise, deleteExercise } from "../actions";
 
 export default async function EjercicioDetailPage({
@@ -33,11 +35,20 @@ export default async function EjercicioDetailPage({
           action={updateExerciseWithId}
         />
       </div>
-      <form action={deleteExerciseWithId} className="max-w-lg">
-        <button type="submit" className="text-sm text-red-600 hover:underline">
-          Eliminar ejercicio
-        </button>
-      </form>
+      <div className="flex max-w-lg gap-3">
+        <Link
+          href="/entrenamientos/ejercicios"
+          className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Volver
+        </Link>
+        <form action={deleteExerciseWithId}>
+          <DeleteButton
+            label="Eliminar ejercicio"
+            confirmMessage={`¿Eliminar el ejercicio "${exercise.name}"? Esta acción no se puede deshacer.`}
+          />
+        </form>
+      </div>
     </div>
   );
 }

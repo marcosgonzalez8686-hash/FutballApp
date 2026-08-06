@@ -1,6 +1,8 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { ClubForm } from "../ClubForm";
+import { DeleteButton } from "@/components/DeleteButton";
 import { updateRival, deleteRival } from "../actions";
 
 export default async function ClubDetailPage({
@@ -22,11 +24,20 @@ export default async function ClubDetailPage({
       <div className="max-w-lg rounded-lg border border-gray-200 bg-white p-6">
         <ClubForm rival={rival} action={updateRivalWithId} />
       </div>
-      <form action={deleteRivalWithId} className="max-w-lg">
-        <button type="submit" className="text-sm text-red-600 hover:underline">
-          Eliminar club
-        </button>
-      </form>
+      <div className="flex max-w-lg gap-3">
+        <Link
+          href="/base-datos/clubes"
+          className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Volver
+        </Link>
+        <form action={deleteRivalWithId}>
+          <DeleteButton
+            label="Eliminar club"
+            confirmMessage={`¿Eliminar el club ${rival.name}? Esta acción no se puede deshacer.`}
+          />
+        </form>
+      </div>
     </div>
   );
 }

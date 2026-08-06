@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { formatDateWithWeekday } from "@/lib/format";
+import { DeleteButton } from "@/components/DeleteButton";
 import { deleteTraining } from "../actions";
 
 export default async function EntrenamientoDetailPage({
@@ -62,11 +63,20 @@ export default async function EntrenamientoDetailPage({
         </Link>
       </div>
 
-      <form action={deleteTrainingWithId} className="max-w-lg">
-        <button type="submit" className="text-sm text-red-600 hover:underline">
-          Eliminar entrenamiento
-        </button>
-      </form>
+      <div className="flex max-w-lg gap-3">
+        <Link
+          href="/entrenamientos"
+          className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Volver
+        </Link>
+        <form action={deleteTrainingWithId}>
+          <DeleteButton
+            label="Eliminar entrenamiento"
+            confirmMessage="¿Eliminar este entrenamiento? Se borrarán también su asistencia y ejercicios. Esta acción no se puede deshacer."
+          />
+        </form>
+      </div>
     </div>
   );
 }

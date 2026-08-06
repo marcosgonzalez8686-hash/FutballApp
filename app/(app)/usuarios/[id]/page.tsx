@@ -1,7 +1,9 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { EditUserForm } from "../EditUserForm";
+import { DeleteButton } from "@/components/DeleteButton";
 import { deleteUser } from "../actions";
 
 export default async function UsuarioDetailPage({
@@ -27,13 +29,22 @@ export default async function UsuarioDetailPage({
       <div className="max-w-lg rounded-lg border border-gray-200 bg-white p-6">
         <EditUserForm user={user} />
       </div>
-      {!isSelf && (
-        <form action={deleteUserWithId} className="max-w-lg">
-          <button type="submit" className="text-sm text-red-600 hover:underline">
-            Eliminar usuario
-          </button>
-        </form>
-      )}
+      <div className="flex max-w-lg gap-3">
+        <Link
+          href="/usuarios"
+          className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Volver
+        </Link>
+        {!isSelf && (
+          <form action={deleteUserWithId}>
+            <DeleteButton
+              label="Eliminar usuario"
+              confirmMessage={`¿Eliminar la cuenta de ${user.name}? Esta acción no se puede deshacer.`}
+            />
+          </form>
+        )}
+      </div>
     </div>
   );
 }

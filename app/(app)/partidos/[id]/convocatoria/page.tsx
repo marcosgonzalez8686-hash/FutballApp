@@ -16,7 +16,7 @@ export default async function ConvocatoriaPage({
       include: { callups: true },
     }),
     prisma.player.findMany({
-      where: { inSquad: true },
+      where: { inSquad: true, available: true },
       orderBy: { name: "asc" },
     }),
   ]);

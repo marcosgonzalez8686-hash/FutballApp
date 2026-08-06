@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { formatDateTime } from "@/lib/format";
+import { DeleteButton } from "@/components/DeleteButton";
 import { deleteMatch } from "../actions";
 
 const competitionLabels = {
@@ -67,11 +68,20 @@ export default async function PartidoDetailPage({
         </Link>
       </div>
 
-      <form action={deleteMatchWithId} className="max-w-lg">
-        <button type="submit" className="text-sm text-red-600 hover:underline">
-          Eliminar partido
-        </button>
-      </form>
+      <div className="flex max-w-lg gap-3">
+        <Link
+          href="/partidos"
+          className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Volver
+        </Link>
+        <form action={deleteMatchWithId}>
+          <DeleteButton
+            label="Eliminar partido"
+            confirmMessage="¿Eliminar este partido? Se borrará también su convocatoria. Esta acción no se puede deshacer."
+          />
+        </form>
+      </div>
     </div>
   );
 }

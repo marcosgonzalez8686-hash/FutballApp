@@ -1,6 +1,8 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { PlayerForm } from "@/components/PlayerForm";
+import { DeleteButton } from "@/components/DeleteButton";
 import {
   updatePlayer,
   addToSquad,
@@ -30,22 +32,31 @@ export default async function BaseDatosJugadorDetailPage({
         <PlayerForm player={player} action={updatePlayerWithId} />
       </div>
 
-      <div className="flex max-w-lg items-center justify-between text-sm">
-        <form action={deletePlayerWithId}>
-          <button type="submit" className="text-red-600 hover:underline">
-            Eliminar jugador
-          </button>
-        </form>
+      <div className="flex max-w-lg items-center justify-between">
+        <div className="flex gap-3">
+          <Link
+            href="/base-datos/jugadores"
+            className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            Volver
+          </Link>
+          <form action={deletePlayerWithId}>
+            <DeleteButton
+              label="Eliminar jugador"
+              confirmMessage={`¿Eliminar definitivamente a ${player.name} de la base de datos? Esta acción no se puede deshacer.`}
+            />
+          </form>
+        </div>
 
         {player.inSquad ? (
           <form action={removeFromSquadWithId}>
-            <button type="submit" className="text-gray-400 hover:underline">
+            <button type="submit" className="text-sm text-gray-400 hover:underline">
               Quitar de la plantilla
             </button>
           </form>
         ) : (
           <form action={addToSquadWithId}>
-            <button type="submit" className="text-gray-400 hover:underline">
+            <button type="submit" className="text-sm text-gray-400 hover:underline">
               Pasar a la plantilla
             </button>
           </form>
