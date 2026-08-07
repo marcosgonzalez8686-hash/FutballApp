@@ -54,6 +54,11 @@ export default async function BaseDatosJugadoresPage() {
                         Plantilla
                       </span>
                     )}
+                    {player.onTrial && (
+                      <span className="ml-2 rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800">
+                        A prueba
+                      </span>
+                    )}
                   </td>
                   <td className="px-4 py-2 text-gray-600">
                     {player.club ?? "-"}

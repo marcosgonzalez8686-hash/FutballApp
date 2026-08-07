@@ -2,11 +2,18 @@
 
 import { useState } from "react";
 
+type PlayerRow = {
+  id: string;
+  name: string;
+  called: boolean;
+  weeklyAttendance: { attended: number; total: number } | null;
+};
+
 export function ConvocatoriaForm({
   players,
   action,
 }: {
-  players: { id: string; name: string; called: boolean }[];
+  players: PlayerRow[];
   action: (formData: FormData) => void;
 }) {
   const [count, setCount] = useState(
@@ -37,6 +44,12 @@ export function ConvocatoriaForm({
               className="h-4 w-4 rounded border-gray-300"
             />
             {player.name}
+            {player.weeklyAttendance && (
+              <span className="text-xs text-gray-400">
+                ({player.weeklyAttendance.attended}/
+                {player.weeklyAttendance.total} entrenos esta semana)
+              </span>
+            )}
           </label>
         ))}
       </div>

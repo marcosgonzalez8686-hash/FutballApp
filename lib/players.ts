@@ -13,5 +13,6 @@ export function parsePlayerForm(formData: FormData) {
     dominantFoot: dominantFoot ? (dominantFoot as DominantFoot) : null,
     phone: (formData.get("phone") as string) || null,
     club: (formData.get("club") as string) || null,
+    onTrial: formData.get("onTrial") === "on",
   };
 }

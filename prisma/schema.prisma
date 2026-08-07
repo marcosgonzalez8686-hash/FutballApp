@@ -54,6 +54,7 @@ model Player {
   phone             String?
   club              String?
   inSquad           Boolean           @default(true)
+  onTrial           Boolean           @default(false)
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
   attendances       TrainingAttendance[]
