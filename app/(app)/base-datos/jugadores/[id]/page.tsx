@@ -32,6 +32,13 @@ export default async function BaseDatosJugadorDetailPage({
         <PlayerForm player={player} action={updatePlayerWithId} />
       </div>
 
+      <Link
+        href={`/listados/asistencia?playerId=${player.id}`}
+        className="max-w-lg text-sm text-green-700 hover:underline"
+      >
+        Ver asistencia a entrenamientos →
+      </Link>
+
       <div className="flex max-w-lg items-center justify-between">
         <div className="flex gap-3">
           <Link

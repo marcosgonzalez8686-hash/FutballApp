@@ -24,6 +24,12 @@ export default async function JugadorPlantillaDetailPage({
       <div className="max-w-lg rounded-lg border border-gray-200 bg-white p-6">
         <PlayerForm player={player} action={updatePlayerWithId} />
       </div>
+      <Link
+        href={`/listados/asistencia?playerId=${player.id}`}
+        className="max-w-lg text-sm text-green-700 hover:underline"
+      >
+        Ver asistencia a entrenamientos →
+      </Link>
       <div className="flex max-w-lg gap-3">
         <Link
           href="/plantilla"

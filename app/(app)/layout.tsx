@@ -12,6 +12,7 @@ const navItems = [
   { href: "/entrenamientos", label: "Entrenamientos" },
   { href: "/partidos", label: "Partidos" },
   { href: "/base-datos", label: "Base de datos" },
+  { href: "/listados", label: "Listados" },
 ];
 
 export default function AppLayout({ children }: { children: ReactNode }) {
