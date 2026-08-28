@@ -14,5 +14,6 @@ export function parsePlayerForm(formData: FormData) {
     phone: (formData.get("phone") as string) || null,
     club: (formData.get("club") as string) || null,
     onTrial: formData.get("onTrial") === "on",
+    enrolled: formData.get("enrolled") === "on",
   };
 }

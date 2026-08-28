@@ -21,6 +21,7 @@ export default async function ConvocatoriaPage({
   const players = await prisma.player.findMany({
     where: {
       inSquad: true,
+      enrolled: true,
       ...(match.competition === "LIGA" ? { onTrial: false } : {}),
     },
     orderBy: { name: "asc" },

@@ -149,6 +149,16 @@ export function PlayerForm({
         Jugador a prueba
       </label>
 
+      <label className="flex items-center gap-2 text-sm text-gray-700">
+        <input
+          type="checkbox"
+          name="enrolled"
+          defaultChecked={player?.enrolled ?? true}
+          className="h-4 w-4 rounded border-gray-300"
+        />
+        Inscrito
+      </label>
+
       <button
         type="submit"
         className="rounded-md bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-800"

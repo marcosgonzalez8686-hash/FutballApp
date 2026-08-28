@@ -61,6 +61,7 @@ model Player {
   club              String?
   inSquad           Boolean           @default(true)
   onTrial           Boolean           @default(false)
+  enrolled          Boolean           @default(true)
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
   attendances       TrainingAttendance[]
