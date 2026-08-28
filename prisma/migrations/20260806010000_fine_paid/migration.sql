@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Fine" ADD COLUMN "paid" BOOLEAN NOT NULL DEFAULT false;

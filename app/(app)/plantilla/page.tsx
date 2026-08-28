@@ -12,12 +12,20 @@ export default async function PlantillaPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-gray-900">Plantilla</h1>
-        <Link
-          href="/plantilla/nuevo"
-          className="rounded-md bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-800"
-        >
-          Nuevo jugador
-        </Link>
+        <div className="flex gap-3">
+          <Link
+            href="/plantilla/multas"
+            className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            Gestión de multas
+          </Link>
+          <Link
+            href="/plantilla/nuevo"
+            className="rounded-md bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-800"
+          >
+            Nuevo jugador
+          </Link>
+        </div>
       </div>
 
       {players.length === 0 ? (

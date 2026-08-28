@@ -191,6 +191,7 @@ model Fine {
   amount     Float
   reason     FineReason
   comment    String?
+  paid       Boolean    @default(false)
   createdAt  DateTime   @default(now())
   player     Player     @relation(fields: [playerId], references: [id], onDelete: Cascade)
   training   Training?  @relation(fields: [trainingId], references: [id], onDelete: Cascade)
