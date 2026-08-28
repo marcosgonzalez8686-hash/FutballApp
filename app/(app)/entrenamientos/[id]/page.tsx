@@ -12,7 +12,14 @@ export default async function EntrenamientoDetailPage({
 }) {
   const { id } = await params;
 
-  const training = await prisma.training.findUnique({ where: { id } });
+  const [training, fineTotal] = await Promise.all([
+    prisma.training.findUnique({ where: { id } }),
+    prisma.fine.aggregate({
+      where: { trainingId: id },
+      _sum: { amount: true },
+      _count: true,
+    }),
+  ]);
 
   if (!training) notFound();
 
@@ -60,6 +67,17 @@ export default async function EntrenamientoDetailPage({
         >
           <p className="font-medium text-gray-900">Lista material</p>
           <p className="text-sm text-gray-500">Marcar lo ya cogido</p>
+        </Link>
+        <Link
+          href={`/entrenamientos/${id}/multas`}
+          className="rounded-lg border border-gray-200 bg-white p-4 hover:border-green-600"
+        >
+          <p className="font-medium text-gray-900">Multas</p>
+          <p className="text-sm text-gray-500">
+            {fineTotal._count > 0
+              ? `${fineTotal._count} · ${(fineTotal._sum.amount ?? 0).toFixed(2)} €`
+              : "Sin multas"}
+          </p>
         </Link>
       </div>
 

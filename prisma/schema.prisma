@@ -35,6 +35,12 @@ enum Competition {
   COPA
 }
 
+enum FineReason {
+  TARDE
+  AUSENCIA_NO_JUSTIFICADA
+  OTROS
+}
+
 model User {
   id           String   @id @default(cuid())
   name         String
@@ -59,6 +65,7 @@ model Player {
   updatedAt         DateTime          @updatedAt
   attendances       TrainingAttendance[]
   callups           MatchCallup[]
+  fines             Fine[]
 }
 
 model Coach {
@@ -94,6 +101,7 @@ model Training {
   attendances    TrainingAttendance[]
   exercises      TrainingExercise[]
   materialChecks TrainingMaterialCheck[]
+  fines          Fine[]
 }
 
 model Material {
@@ -172,6 +180,21 @@ model Match {
   createdAt   DateTime    @default(now())
   rival       Rival       @relation(fields: [rivalId], references: [id], onDelete: Restrict)
   callups     MatchCallup[]
+  fines       Fine[]
+}
+
+model Fine {
+  id         String     @id @default(cuid())
+  playerId   String
+  trainingId String?
+  matchId    String?
+  amount     Float
+  reason     FineReason
+  comment    String?
+  createdAt  DateTime   @default(now())
+  player     Player     @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  training   Training?  @relation(fields: [trainingId], references: [id], onDelete: Cascade)
+  match      Match?     @relation(fields: [matchId], references: [id], onDelete: Cascade)
 }
 
 model MatchCallup {

@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import type { AttendanceStatus } from "@/app/generated/prisma/enums";
+import type { AttendanceStatus, FineReason } from "@/app/generated/prisma/enums";
 
 function parseTrainingForm(formData: FormData) {
   const date = formData.get("date") as string;
@@ -125,4 +125,32 @@ export async function toggleMaterialCollected(
   });
 
   revalidatePath(`/entrenamientos/${trainingId}/material`);
+}
+
+export async function addTrainingFine(trainingId: string, formData: FormData) {
+  const playerId = formData.get("playerId") as string;
+  const amountRaw = formData.get("amount") as string;
+  const reason = formData.get("reason") as FineReason;
+  const comment = (formData.get("comment") as string) || null;
+
+  if (!playerId || !amountRaw || !reason) return;
+
+  await prisma.fine.create({
+    data: {
+      playerId,
+      trainingId,
+      amount: parseFloat(amountRaw),
+      reason,
+      comment,
+    },
+  });
+
+  revalidatePath(`/entrenamientos/${trainingId}/multas`);
+  revalidatePath(`/entrenamientos/${trainingId}`);
+}
+
+export async function deleteTrainingFine(fineId: string, trainingId: string) {
+  await prisma.fine.delete({ where: { id: fineId } });
+  revalidatePath(`/entrenamientos/${trainingId}/multas`);
+  revalidatePath(`/entrenamientos/${trainingId}`);
 }

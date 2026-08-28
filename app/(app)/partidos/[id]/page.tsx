@@ -24,13 +24,18 @@ export default async function PartidoDetailPage({
 }) {
   const { id } = await params;
 
-  const [match, calledPlayers, unavailableCount] = await Promise.all([
+  const [match, calledPlayers, unavailableCount, fineTotal] = await Promise.all([
     prisma.match.findUnique({ where: { id }, include: { rival: true } }),
     prisma.matchCallup.findMany({
       where: { matchId: id, called: true },
       include: { player: true },
     }),
     prisma.matchCallup.count({ where: { matchId: id, unavailable: true } }),
+    prisma.fine.aggregate({
+      where: { matchId: id },
+      _sum: { amount: true },
+      _count: true,
+    }),
   ]);
 
   if (!match) notFound();
@@ -96,6 +101,17 @@ export default async function PartidoDetailPage({
           <p className="font-medium text-gray-900">No disponibles</p>
           <p className="text-sm text-gray-500">
             Quién no puede ir a este partido
+          </p>
+        </Link>
+        <Link
+          href={`/partidos/${id}/multas`}
+          className="rounded-lg border border-gray-200 bg-white p-4 hover:border-green-600"
+        >
+          <p className="font-medium text-gray-900">Multas</p>
+          <p className="text-sm text-gray-500">
+            {fineTotal._count > 0
+              ? `${fineTotal._count} · ${(fineTotal._sum.amount ?? 0).toFixed(2)} €`
+              : "Sin multas"}
           </p>
         </Link>
       </div>

@@ -3,7 +3,11 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import type { MatchStatus, Competition } from "@/app/generated/prisma/enums";
+import type {
+  MatchStatus,
+  Competition,
+  FineReason,
+} from "@/app/generated/prisma/enums";
 
 function parseMatchForm(formData: FormData) {
   const ourScore = formData.get("ourScore") as string;
@@ -82,5 +86,33 @@ export async function toggleMatchUnavailable(
 
   revalidatePath(`/partidos/${matchId}/no-disponibles`);
   revalidatePath(`/partidos/${matchId}/convocatoria`);
+  revalidatePath(`/partidos/${matchId}`);
+}
+
+export async function addMatchFine(matchId: string, formData: FormData) {
+  const playerId = formData.get("playerId") as string;
+  const amountRaw = formData.get("amount") as string;
+  const reason = formData.get("reason") as FineReason;
+  const comment = (formData.get("comment") as string) || null;
+
+  if (!playerId || !amountRaw || !reason) return;
+
+  await prisma.fine.create({
+    data: {
+      playerId,
+      matchId,
+      amount: parseFloat(amountRaw),
+      reason,
+      comment,
+    },
+  });
+
+  revalidatePath(`/partidos/${matchId}/multas`);
+  revalidatePath(`/partidos/${matchId}`);
+}
+
+export async function deleteMatchFine(fineId: string, matchId: string) {
+  await prisma.fine.delete({ where: { id: fineId } });
+  revalidatePath(`/partidos/${matchId}/multas`);
   revalidatePath(`/partidos/${matchId}`);
 }
