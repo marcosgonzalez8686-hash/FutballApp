@@ -24,15 +24,33 @@ export default async function PartidoDetailPage({
 }) {
   const { id } = await params;
 
-  const [match, calledCount, unavailableCount] = await Promise.all([
+  const [match, calledPlayers, unavailableCount] = await Promise.all([
     prisma.match.findUnique({ where: { id }, include: { rival: true } }),
-    prisma.matchCallup.count({ where: { matchId: id, called: true } }),
+    prisma.matchCallup.findMany({
+      where: { matchId: id, called: true },
+      include: { player: true },
+    }),
     prisma.matchCallup.count({ where: { matchId: id, unavailable: true } }),
   ]);
 
   if (!match) notFound();
 
+  calledPlayers.sort((a, b) => a.player.name.localeCompare(b.player.name));
+  const calledCount = calledPlayers.length;
+
   const deleteMatchWithId = deleteMatch.bind(null, id);
+
+  let whatsappUrl: string | null = null;
+  if (calledCount > 0) {
+    const lines = [
+      `Convocatoria - ${match.isHome ? "vs" : "@"} ${match.rival.name}`,
+      `${competitionLabels[match.competition]} · ${formatDateTime(match.date)}`,
+      "",
+      `Convocados (${calledCount}):`,
+      ...calledPlayers.map((c, i) => `${i + 1}. ${c.player.name}`),
+    ];
+    whatsappUrl = `https://wa.me/?text=${encodeURIComponent(lines.join("\n"))}`;
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -48,10 +66,11 @@ export default async function PartidoDetailPage({
             match.rivalScore !== null &&
             ` · ${match.ourScore} - ${match.rivalScore}`}
         </p>
-        <p className="text-sm text-gray-500">
-          {calledCount} convocados
-          {unavailableCount > 0 && ` · ${unavailableCount} no disponibles`}
-        </p>
+        {unavailableCount > 0 && (
+          <p className="text-sm text-gray-500">
+            {unavailableCount} no disponibles
+          </p>
+        )}
         {match.notes && <p className="mt-1 text-sm text-gray-500">{match.notes}</p>}
       </div>
 
@@ -68,7 +87,7 @@ export default async function PartidoDetailPage({
           className="rounded-lg border border-gray-200 bg-white p-4 hover:border-green-600"
         >
           <p className="font-medium text-gray-900">Convocatoria</p>
-          <p className="text-sm text-gray-500">Marcar jugadores convocados</p>
+          <p className="text-sm text-gray-500">{calledCount} convocados</p>
         </Link>
         <Link
           href={`/partidos/${id}/no-disponibles`}
@@ -80,6 +99,17 @@ export default async function PartidoDetailPage({
           </p>
         </Link>
       </div>
+
+      {whatsappUrl && (
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex max-w-lg items-center justify-center gap-2 rounded-md bg-[#25D366] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+        >
+          Enviar convocatoria por WhatsApp
+        </a>
+      )}
 
       <div className="flex max-w-lg gap-3">
         <Link
