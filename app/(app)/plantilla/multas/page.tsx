@@ -5,6 +5,13 @@ export default function GestionMultasPage() {
     <div className="flex flex-col gap-6">
       <h1 className="text-2xl font-semibold text-gray-900">Gestión de multas</h1>
 
+      <Link
+        href="/plantilla/multas/pendientes/nueva"
+        className="max-w-lg rounded-md bg-green-700 px-4 py-2 text-center text-sm font-medium text-white hover:bg-green-800"
+      >
+        Nueva multa
+      </Link>
+
       <div className="flex max-w-lg flex-col gap-3">
         <Link
           href="/plantilla/multas/pendientes"

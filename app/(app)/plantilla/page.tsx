@@ -3,6 +3,18 @@ import { prisma } from "@/lib/prisma";
 import { PositionBadge } from "@/components/PositionBadge";
 import { PLAYER_POSITIONS } from "@/lib/positions";
 
+const availabilityLabels = {
+  DISPONIBLE: "Disponible",
+  LESIONADO: "Lesionado",
+  SANCIONADO: "Sancionado",
+};
+
+const availabilityStyles = {
+  DISPONIBLE: "bg-green-100 text-green-800",
+  LESIONADO: "bg-red-100 text-red-800",
+  SANCIONADO: "bg-yellow-100 text-yellow-800",
+};
+
 export default async function PlantillaPage() {
   const players = await prisma.player.findMany({
     where: { inSquad: true },
@@ -47,7 +59,7 @@ export default async function PlantillaPage() {
               <tr>
                 <th className="px-4 py-2 font-medium">Nombre</th>
                 <th className="px-4 py-2 font-medium">Posición</th>
-                <th className="px-4 py-2 font-medium">Teléfono</th>
+                <th className="px-4 py-2 font-medium">Estado</th>
               </tr>
             </thead>
             <tbody>
@@ -74,8 +86,12 @@ export default async function PlantillaPage() {
                   <td className="px-4 py-2">
                     <PositionBadge position={player.position} />
                   </td>
-                  <td className="px-4 py-2 text-gray-600">
-                    {player.phone ?? "-"}
+                  <td className="px-4 py-2">
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${availabilityStyles[player.availability]}`}
+                    >
+                      {availabilityLabels[player.availability]}
+                    </span>
                   </td>
                 </tr>
               ))}

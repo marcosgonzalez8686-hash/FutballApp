@@ -49,13 +49,6 @@ export default async function MultasPendientesPage() {
         )}
       </div>
 
-      <Link
-        href="/plantilla/multas/pendientes/nueva"
-        className="max-w-lg rounded-md bg-green-700 px-4 py-2 text-center text-sm font-medium text-white hover:bg-green-800"
-      >
-        Nueva multa
-      </Link>
-
       {rows.length === 0 ? (
         <p className="text-sm text-gray-400">No hay multas pendientes de cobro.</p>
       ) : (
