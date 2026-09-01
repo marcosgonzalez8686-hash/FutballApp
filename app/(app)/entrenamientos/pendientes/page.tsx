@@ -1,0 +1,43 @@
+import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import { TrainingList } from "../TrainingList";
+
+export default async function EntrenamientosPendientesPage() {
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
+  const trainings = await prisma.training.findMany({
+    where: { date: { gte: startOfToday } },
+    orderBy: { date: "asc" },
+    include: {
+      _count: { select: { exercises: true } },
+      exercises: {
+        include: {
+          exercise: {
+            include: { materials: { include: { material: true } } },
+          },
+        },
+      },
+    },
+  });
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-medium text-gray-500">Pendientes</h2>
+        <Link
+          href="/entrenamientos/nuevo"
+          className="rounded-md bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-800"
+        >
+          Nuevo entrenamiento
+        </Link>
+      </div>
+
+      {trainings.length === 0 ? (
+        <p className="text-sm text-gray-400">No hay entrenamientos pendientes.</p>
+      ) : (
+        <TrainingList trainings={trainings} />
+      )}
+    </div>
+  );
+}

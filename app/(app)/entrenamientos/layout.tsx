@@ -2,7 +2,8 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 const tabs = [
-  { href: "/entrenamientos", label: "Sesiones" },
+  { href: "/entrenamientos/pendientes", label: "Pendientes" },
+  { href: "/entrenamientos/finalizados", label: "Finalizados" },
   { href: "/entrenamientos/ejercicios", label: "Ejercicios" },
   { href: "/entrenamientos/materiales", label: "Materiales" },
 ];
