@@ -139,6 +139,22 @@ export function PlayerForm({
         </div>
       </div>
 
+      <div>
+        <label htmlFor="availability" className="block text-sm font-medium text-gray-700">
+          Estado
+        </label>
+        <select
+          id="availability"
+          name="availability"
+          defaultValue={player?.availability ?? "DISPONIBLE"}
+          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none"
+        >
+          <option value="DISPONIBLE">Disponible</option>
+          <option value="LESIONADO">Lesionado</option>
+          <option value="SANCIONADO">Sancionado</option>
+        </select>
+      </div>
+
       <label className="flex items-center gap-2 text-sm text-gray-700">
         <input
           type="checkbox"

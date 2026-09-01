@@ -41,6 +41,12 @@ enum FineReason {
   OTROS
 }
 
+enum PlayerAvailability {
+  DISPONIBLE
+  LESIONADO
+  SANCIONADO
+}
+
 model User {
   id           String   @id @default(cuid())
   name         String
@@ -62,6 +68,7 @@ model Player {
   inSquad           Boolean           @default(true)
   onTrial           Boolean           @default(false)
   enrolled          Boolean           @default(true)
+  availability      PlayerAvailability @default(DISPONIBLE)
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
   attendances       TrainingAttendance[]

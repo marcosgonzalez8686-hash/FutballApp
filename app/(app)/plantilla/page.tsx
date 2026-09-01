@@ -1,11 +1,21 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { PositionBadge } from "@/components/PositionBadge";
+import { PLAYER_POSITIONS } from "@/lib/positions";
 
 export default async function PlantillaPage() {
   const players = await prisma.player.findMany({
     where: { inSquad: true },
     orderBy: { name: "asc" },
+  });
+
+  players.sort((a, b) => {
+    const aIndex = a.position ? PLAYER_POSITIONS.indexOf(a.position as (typeof PLAYER_POSITIONS)[number]) : -1;
+    const bIndex = b.position ? PLAYER_POSITIONS.indexOf(b.position as (typeof PLAYER_POSITIONS)[number]) : -1;
+    const aOrder = aIndex === -1 ? PLAYER_POSITIONS.length : aIndex;
+    const bOrder = bIndex === -1 ? PLAYER_POSITIONS.length : bIndex;
+    if (aOrder !== bOrder) return aOrder - bOrder;
+    return a.name.localeCompare(b.name);
   });
 
   return (
