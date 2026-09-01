@@ -51,14 +51,17 @@ function MatchList({
 }
 
 export default async function PartidosPage() {
-  const [pending, played] = await Promise.all([
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
+  const [pending, finished] = await Promise.all([
     prisma.match.findMany({
-      where: { status: { not: "JUGADO" } },
+      where: { date: { gte: startOfToday } },
       orderBy: { date: "asc" },
       include: { rival: true },
     }),
     prisma.match.findMany({
-      where: { status: "JUGADO" },
+      where: { date: { lt: startOfToday } },
       orderBy: { date: "desc" },
       include: { rival: true },
     }),
@@ -76,7 +79,7 @@ export default async function PartidosPage() {
         </Link>
       </div>
 
-      {pending.length === 0 && played.length === 0 ? (
+      {pending.length === 0 && finished.length === 0 ? (
         <p className="text-sm text-gray-400">Todavía no hay partidos.</p>
       ) : (
         <>
@@ -90,11 +93,11 @@ export default async function PartidosPage() {
           </div>
 
           <div className="flex flex-col gap-3">
-            <h2 className="text-sm font-medium text-gray-500">Jugados</h2>
-            {played.length === 0 ? (
-              <p className="text-sm text-gray-400">Todavía no se ha jugado ningún partido.</p>
+            <h2 className="text-sm font-medium text-gray-500">Finalizados</h2>
+            {finished.length === 0 ? (
+              <p className="text-sm text-gray-400">Todavía no hay partidos finalizados.</p>
             ) : (
-              <MatchList matches={played} />
+              <MatchList matches={finished} />
             )}
           </div>
         </>
