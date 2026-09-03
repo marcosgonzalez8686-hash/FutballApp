@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { TOTAL_LINEUP_DOLLS } from "@/lib/formation";
 import type {
   MatchStatus,
   Competition,
@@ -136,4 +137,92 @@ export async function deleteMatchEvent(eventId: string, matchId: string) {
   await prisma.matchEvent.delete({ where: { id: eventId } });
   revalidatePath(`/partidos/${matchId}/eventos`);
   revalidatePath(`/partidos/${matchId}`);
+}
+
+export async function moveLineupDoll(
+  matchId: string,
+  sourceSlotId: string | null,
+  targetSlotId: string | null
+) {
+  if (sourceSlotId === targetSlotId) return;
+  if (sourceSlotId === null && targetSlotId === null) return;
+
+  if (sourceSlotId === null && targetSlotId !== null) {
+    const [existing, count] = await Promise.all([
+      prisma.matchLineupSlot.findUnique({
+        where: { matchId_slotId: { matchId, slotId: targetSlotId } },
+      }),
+      prisma.matchLineupSlot.count({ where: { matchId } }),
+    ]);
+    if (existing || count >= TOTAL_LINEUP_DOLLS) return;
+    await prisma.matchLineupSlot.create({
+      data: { matchId, slotId: targetSlotId, playerId: null },
+    });
+  } else if (sourceSlotId !== null && targetSlotId === null) {
+    await prisma.matchLineupSlot.deleteMany({ where: { matchId, slotId: sourceSlotId } });
+  } else if (sourceSlotId !== null && targetSlotId !== null) {
+    const [source, target] = await Promise.all([
+      prisma.matchLineupSlot.findUnique({
+        where: { matchId_slotId: { matchId, slotId: sourceSlotId } },
+      }),
+      prisma.matchLineupSlot.findUnique({
+        where: { matchId_slotId: { matchId, slotId: targetSlotId } },
+      }),
+    ]);
+    if (!source) return;
+
+    if (!target) {
+      await prisma.matchLineupSlot.update({
+        where: { id: source.id },
+        data: { slotId: targetSlotId },
+      });
+    } else {
+      await prisma.$transaction([
+        prisma.matchLineupSlot.update({
+          where: { id: source.id },
+          data: { slotId: `__tmp__${source.id}` },
+        }),
+        prisma.matchLineupSlot.update({
+          where: { id: target.id },
+          data: { slotId: sourceSlotId },
+        }),
+        prisma.matchLineupSlot.update({
+          where: { id: source.id },
+          data: { slotId: targetSlotId },
+        }),
+      ]);
+    }
+  }
+
+  revalidatePath(`/partidos/${matchId}/alineacion`);
+  revalidatePath(`/partidos/${matchId}`);
+}
+
+export async function assignLineupPlayer(
+  matchId: string,
+  slotId: string,
+  playerId: string | null
+) {
+  await prisma.matchLineupSlot.update({
+    where: { matchId_slotId: { matchId, slotId } },
+    data: { playerId },
+  });
+  revalidatePath(`/partidos/${matchId}/alineacion`);
+  revalidatePath(`/partidos/${matchId}`);
+}
+
+export async function saveDefaultFormation(matchId: string) {
+  const slots = await prisma.matchLineupSlot.findMany({
+    where: { matchId },
+    select: { slotId: true },
+  });
+  const slotIds = slots.map((s) => s.slotId);
+
+  await prisma.defaultFormation.upsert({
+    where: { id: "default" },
+    update: { slots: slotIds },
+    create: { id: "default", slots: slotIds },
+  });
+
+  revalidatePath(`/partidos/${matchId}/alineacion`);
 }

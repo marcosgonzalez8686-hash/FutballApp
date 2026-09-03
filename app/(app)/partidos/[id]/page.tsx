@@ -24,20 +24,24 @@ export default async function PartidoDetailPage({
 }) {
   const { id } = await params;
 
-  const [match, calledPlayers, unavailableCount, fineTotal, eventCount] = await Promise.all([
-    prisma.match.findUnique({ where: { id }, include: { rival: true } }),
-    prisma.matchCallup.findMany({
-      where: { matchId: id, called: true },
-      include: { player: true },
-    }),
-    prisma.matchCallup.count({ where: { matchId: id, unavailable: true } }),
-    prisma.fine.aggregate({
-      where: { matchId: id },
-      _sum: { amount: true },
-      _count: true,
-    }),
-    prisma.matchEvent.count({ where: { matchId: id } }),
-  ]);
+  const [match, calledPlayers, unavailableCount, fineTotal, eventCount, lineupCount] =
+    await Promise.all([
+      prisma.match.findUnique({ where: { id }, include: { rival: true } }),
+      prisma.matchCallup.findMany({
+        where: { matchId: id, called: true },
+        include: { player: true },
+      }),
+      prisma.matchCallup.count({ where: { matchId: id, unavailable: true } }),
+      prisma.fine.aggregate({
+        where: { matchId: id },
+        _sum: { amount: true },
+        _count: true,
+      }),
+      prisma.matchEvent.count({ where: { matchId: id } }),
+      prisma.matchLineupSlot.count({
+        where: { matchId: id, playerId: { not: null } },
+      }),
+    ]);
 
   if (!match) notFound();
 
@@ -127,6 +131,13 @@ export default async function PartidoDetailPage({
           <p className="text-sm text-gray-500">
             {eventCount > 0 ? `${eventCount} registrados` : "Goles, asistencias, tarjetas"}
           </p>
+        </Link>
+        <Link
+          href={`/partidos/${id}/alineacion`}
+          className="rounded-lg border border-gray-200 bg-white p-4 hover:border-green-600"
+        >
+          <p className="font-medium text-gray-900">Alineación</p>
+          <p className="text-sm text-gray-500">{lineupCount}/11 jugadores colocados</p>
         </Link>
       </div>
 
