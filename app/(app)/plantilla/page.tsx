@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { PositionBadge } from "@/components/PositionBadge";
-import { PLAYER_POSITIONS } from "@/lib/positions";
+import { POSITION_GROUPS } from "@/lib/positions";
 
 const availabilityLabels = {
   DISPONIBLE: "Disponible",
@@ -21,14 +21,68 @@ export default async function PlantillaPage() {
     orderBy: { name: "asc" },
   });
 
-  players.sort((a, b) => {
-    const aIndex = a.position ? PLAYER_POSITIONS.indexOf(a.position as (typeof PLAYER_POSITIONS)[number]) : -1;
-    const bIndex = b.position ? PLAYER_POSITIONS.indexOf(b.position as (typeof PLAYER_POSITIONS)[number]) : -1;
-    const aOrder = aIndex === -1 ? PLAYER_POSITIONS.length : aIndex;
-    const bOrder = bIndex === -1 ? PLAYER_POSITIONS.length : bIndex;
-    if (aOrder !== bOrder) return aOrder - bOrder;
-    return a.name.localeCompare(b.name);
-  });
+  const groups: { label: string; players: typeof players }[] = POSITION_GROUPS.map((group) => ({
+    label: group.label,
+    players: players.filter(
+      (p) => p.position && (group.positions as readonly string[]).includes(p.position)
+    ),
+  }));
+
+  const groupedPositions = new Set(POSITION_GROUPS.flatMap((g) => g.positions as readonly string[]));
+  const unassigned = players.filter((p) => !p.position || !groupedPositions.has(p.position));
+  if (unassigned.length > 0) {
+    groups.push({ label: "Sin posición", players: unassigned });
+  }
+
+  function PlayerTable({ players }: { players: typeof unassigned }) {
+    return (
+      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+        <table className="w-full text-sm">
+          <thead className="border-b border-gray-200 bg-gray-50 text-left text-gray-500">
+            <tr>
+              <th className="px-4 py-2 font-medium">Nombre</th>
+              <th className="px-4 py-2 font-medium">Posición</th>
+              <th className="px-4 py-2 font-medium">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {players.map((player) => (
+              <tr key={player.id} className="border-b border-gray-100 last:border-0">
+                <td className="px-4 py-2">
+                  <Link
+                    href={`/plantilla/${player.id}`}
+                    className="font-medium text-gray-900 hover:text-green-700"
+                  >
+                    {player.name}
+                  </Link>
+                  {player.nickname && (
+                    <span className="ml-1 text-gray-400">
+                      &ldquo;{player.nickname}&rdquo;
+                    </span>
+                  )}
+                  {player.onTrial && (
+                    <span className="ml-2 rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800">
+                      A prueba
+                    </span>
+                  )}
+                </td>
+                <td className="px-4 py-2">
+                  <PositionBadge position={player.position} />
+                </td>
+                <td className="px-4 py-2">
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${availabilityStyles[player.availability]}`}
+                  >
+                    {availabilityLabels[player.availability]}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -53,50 +107,16 @@ export default async function PlantillaPage() {
       {players.length === 0 ? (
         <p className="text-sm text-gray-400">Todavía no hay jugadores en la plantilla.</p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
-          <table className="w-full text-sm">
-            <thead className="border-b border-gray-200 bg-gray-50 text-left text-gray-500">
-              <tr>
-                <th className="px-4 py-2 font-medium">Nombre</th>
-                <th className="px-4 py-2 font-medium">Posición</th>
-                <th className="px-4 py-2 font-medium">Estado</th>
-              </tr>
-            </thead>
-            <tbody>
-              {players.map((player) => (
-                <tr key={player.id} className="border-b border-gray-100 last:border-0">
-                  <td className="px-4 py-2">
-                    <Link
-                      href={`/plantilla/${player.id}`}
-                      className="font-medium text-gray-900 hover:text-green-700"
-                    >
-                      {player.name}
-                    </Link>
-                    {player.nickname && (
-                      <span className="ml-1 text-gray-400">
-                        &ldquo;{player.nickname}&rdquo;
-                      </span>
-                    )}
-                    {player.onTrial && (
-                      <span className="ml-2 rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800">
-                        A prueba
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-4 py-2">
-                    <PositionBadge position={player.position} />
-                  </td>
-                  <td className="px-4 py-2">
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${availabilityStyles[player.availability]}`}
-                    >
-                      {availabilityLabels[player.availability]}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="flex flex-col gap-6">
+          {groups.map(
+            (group) =>
+              group.players.length > 0 && (
+                <div key={group.label} className="flex flex-col gap-2">
+                  <h2 className="text-sm font-medium text-gray-500">{group.label}</h2>
+                  <PlayerTable players={group.players} />
+                </div>
+              )
+          )}
         </div>
       )}
     </div>

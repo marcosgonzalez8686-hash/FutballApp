@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { formatDateTime } from "@/lib/format";
+import { formatDateTime, formatHourMinute, formatWeekdayDayMonth } from "@/lib/format";
 import { DeleteButton } from "@/components/DeleteButton";
 import { deleteMatch } from "../actions";
 
@@ -24,7 +24,7 @@ export default async function PartidoDetailPage({
 }) {
   const { id } = await params;
 
-  const [match, calledPlayers, unavailableCount, fineTotal] = await Promise.all([
+  const [match, calledPlayers, unavailableCount, fineTotal, eventCount] = await Promise.all([
     prisma.match.findUnique({ where: { id }, include: { rival: true } }),
     prisma.matchCallup.findMany({
       where: { matchId: id, called: true },
@@ -36,6 +36,7 @@ export default async function PartidoDetailPage({
       _sum: { amount: true },
       _count: true,
     }),
+    prisma.matchEvent.count({ where: { matchId: id } }),
   ]);
 
   if (!match) notFound();
@@ -47,9 +48,13 @@ export default async function PartidoDetailPage({
 
   let whatsappUrl: string | null = null;
   if (calledCount > 0) {
+    const arrivalTime = new Date(match.date.getTime() - 60 * 60 * 1000);
     const lines = [
-      `Convocatoria - ${match.isHome ? "vs" : "@"} ${match.rival.name}`,
-      `${competitionLabels[match.competition]} · ${formatDateTime(match.date)}`,
+      `CONVOCATORIA (${match.competition})`,
+      `${match.isHome ? "VS" : "@"} ${match.rival.name}`,
+      `${formatWeekdayDayMonth(match.date)}.`,
+      `Hora de partido: ${formatHourMinute(match.date)}`,
+      `Hora en el campo: ${formatHourMinute(arrivalTime)}`,
       "",
       `Convocados (${calledCount}):`,
       ...calledPlayers.map((c, i) => `${i + 1}. ${c.player.name}`),
@@ -112,6 +117,15 @@ export default async function PartidoDetailPage({
             {fineTotal._count > 0
               ? `${fineTotal._count} · ${(fineTotal._sum.amount ?? 0).toFixed(2)} €`
               : "Sin multas"}
+          </p>
+        </Link>
+        <Link
+          href={`/partidos/${id}/eventos`}
+          className="rounded-lg border border-gray-200 bg-white p-4 hover:border-green-600"
+        >
+          <p className="font-medium text-gray-900">Eventos</p>
+          <p className="text-sm text-gray-500">
+            {eventCount > 0 ? `${eventCount} registrados` : "Goles, asistencias, tarjetas"}
           </p>
         </Link>
       </div>

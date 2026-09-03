@@ -47,6 +47,13 @@ enum PlayerAvailability {
   SANCIONADO
 }
 
+enum MatchEventType {
+  GOL
+  ASISTENCIA
+  TARJETA_AMARILLA
+  TARJETA_ROJA
+}
+
 model User {
   id           String   @id @default(cuid())
   name         String
@@ -74,6 +81,7 @@ model Player {
   attendances       TrainingAttendance[]
   callups           MatchCallup[]
   fines             Fine[]
+  matchEvents       MatchEvent[]
 }
 
 model Coach {
@@ -189,6 +197,7 @@ model Match {
   rival       Rival       @relation(fields: [rivalId], references: [id], onDelete: Restrict)
   callups     MatchCallup[]
   fines       Fine[]
+  events      MatchEvent[]
 }
 
 model Fine {
@@ -216,4 +225,14 @@ model MatchCallup {
   player      Player  @relation(fields: [playerId], references: [id], onDelete: Cascade)
 
   @@unique([matchId, playerId])
+}
+
+model MatchEvent {
+  id        String         @id @default(cuid())
+  matchId   String
+  playerId  String
+  type      MatchEventType
+  createdAt DateTime       @default(now())
+  match     Match          @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  player    Player         @relation(fields: [playerId], references: [id], onDelete: Cascade)
 }

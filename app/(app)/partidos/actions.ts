@@ -7,6 +7,7 @@ import type {
   MatchStatus,
   Competition,
   FineReason,
+  MatchEventType,
 } from "@/app/generated/prisma/enums";
 
 function parseMatchForm(formData: FormData) {
@@ -114,5 +115,25 @@ export async function addMatchFine(matchId: string, formData: FormData) {
 export async function deleteMatchFine(fineId: string, matchId: string) {
   await prisma.fine.delete({ where: { id: fineId } });
   revalidatePath(`/partidos/${matchId}/multas`);
+  revalidatePath(`/partidos/${matchId}`);
+}
+
+export async function addMatchEvent(matchId: string, formData: FormData) {
+  const playerId = formData.get("playerId") as string;
+  const type = formData.get("type") as MatchEventType;
+
+  if (!playerId || !type) return;
+
+  await prisma.matchEvent.create({
+    data: { matchId, playerId, type },
+  });
+
+  revalidatePath(`/partidos/${matchId}/eventos`);
+  revalidatePath(`/partidos/${matchId}`);
+}
+
+export async function deleteMatchEvent(eventId: string, matchId: string) {
+  await prisma.matchEvent.delete({ where: { id: eventId } });
+  revalidatePath(`/partidos/${matchId}/eventos`);
   revalidatePath(`/partidos/${matchId}`);
 }
