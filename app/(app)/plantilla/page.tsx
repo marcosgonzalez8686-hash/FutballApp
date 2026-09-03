@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { PositionBadge } from "@/components/PositionBadge";
-import { POSITION_GROUPS } from "@/lib/positions";
+import { PLAYER_POSITIONS, POSITION_GROUPS } from "@/lib/positions";
 
 const availabilityLabels = {
   DISPONIBLE: "Disponible",
@@ -21,15 +21,26 @@ export default async function PlantillaPage() {
     orderBy: { name: "asc" },
   });
 
+  function byPositionThenName(a: (typeof players)[number], b: (typeof players)[number]) {
+    const aIndex = a.position ? PLAYER_POSITIONS.indexOf(a.position as (typeof PLAYER_POSITIONS)[number]) : -1;
+    const bIndex = b.position ? PLAYER_POSITIONS.indexOf(b.position as (typeof PLAYER_POSITIONS)[number]) : -1;
+    const aOrder = aIndex === -1 ? PLAYER_POSITIONS.length : aIndex;
+    const bOrder = bIndex === -1 ? PLAYER_POSITIONS.length : bIndex;
+    if (aOrder !== bOrder) return aOrder - bOrder;
+    return a.name.localeCompare(b.name);
+  }
+
   const groups: { label: string; players: typeof players }[] = POSITION_GROUPS.map((group) => ({
     label: group.label,
-    players: players.filter(
-      (p) => p.position && (group.positions as readonly string[]).includes(p.position)
-    ),
+    players: players
+      .filter((p) => p.position && (group.positions as readonly string[]).includes(p.position))
+      .sort(byPositionThenName),
   }));
 
   const groupedPositions = new Set(POSITION_GROUPS.flatMap((g) => g.positions as readonly string[]));
-  const unassigned = players.filter((p) => !p.position || !groupedPositions.has(p.position));
+  const unassigned = players
+    .filter((p) => !p.position || !groupedPositions.has(p.position))
+    .sort(byPositionThenName);
   if (unassigned.length > 0) {
     groups.push({ label: "Sin posición", players: unassigned });
   }
