@@ -38,6 +38,19 @@ export function ScoutingForm({
       </div>
 
       <div>
+        <label htmlFor="opponent" className="block text-sm font-medium text-gray-700">
+          Rival del partido ojeado
+        </label>
+        <input
+          id="opponent"
+          name="opponent"
+          type="text"
+          defaultValue={scouting?.opponent ?? ""}
+          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none"
+        />
+      </div>
+
+      <div>
         <label htmlFor="bpOfensivo" className="block text-sm font-medium text-gray-700">
           BP Ofensivo
         </label>

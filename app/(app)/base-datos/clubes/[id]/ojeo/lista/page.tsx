@@ -40,6 +40,7 @@ export default async function ListaOjeosPage({
                   <p className="font-medium text-gray-900">
                     {formatDate(scouting.date)}
                     {scouting.scoutName && ` · ${scouting.scoutName}`}
+                    {scouting.opponent && ` · vs ${scouting.opponent}`}
                   </p>
                   <div className="flex items-center gap-3">
                     <Link

@@ -10,6 +10,7 @@ function parseScoutingForm(formData: FormData) {
   return {
     date: date ? new Date(date) : null,
     scoutName: (formData.get("scoutName") as string) || null,
+    opponent: (formData.get("opponent") as string) || null,
     bpOfensivo: (formData.get("bpOfensivo") as string) || null,
     bpDefensivo: (formData.get("bpDefensivo") as string) || null,
     salidaBalon: (formData.get("salidaBalon") as string) || null,

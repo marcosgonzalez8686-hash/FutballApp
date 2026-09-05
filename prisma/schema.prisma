@@ -266,6 +266,7 @@ model Scouting {
   rivalId        String
   date           DateTime
   scoutName      String?
+  opponent       String?
   bpOfensivo     String?
   bpDefensivo    String?
   salidaBalon    String?
