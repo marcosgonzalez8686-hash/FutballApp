@@ -7,6 +7,10 @@ import { prisma } from "@/lib/prisma";
 function parseRivalForm(formData: FormData) {
   return {
     name: formData.get("name") as string,
+    contact: (formData.get("contact") as string) || null,
+    venue: (formData.get("venue") as string) || null,
+    address: (formData.get("address") as string) || null,
+    phone: (formData.get("phone") as string) || null,
     notes: (formData.get("notes") as string) || null,
   };
 }

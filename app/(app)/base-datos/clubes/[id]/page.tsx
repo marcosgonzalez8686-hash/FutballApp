@@ -24,6 +24,17 @@ export default async function ClubDetailPage({
       <div className="max-w-lg rounded-lg border border-gray-200 bg-white p-6">
         <ClubForm rival={rival} action={updateRivalWithId} />
       </div>
+
+      <Link
+        href={`/base-datos/clubes/${id}/ojeo`}
+        className="max-w-lg rounded-lg border border-gray-200 bg-white p-4 hover:border-green-600"
+      >
+        <p className="font-medium text-gray-900">Ojeo</p>
+        <p className="text-sm text-gray-500">
+          Observaciones de partidos y vídeos de este club
+        </p>
+      </Link>
+
       <div className="flex max-w-lg gap-3">
         <Link
           href="/base-datos/clubes"

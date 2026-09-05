@@ -104,9 +104,14 @@ model Referee {
 model Rival {
   id        String   @id @default(cuid())
   name      String
+  contact   String?
+  venue     String?
+  address   String?
+  phone     String?
   notes     String?
   createdAt DateTime @default(now())
   matches   Match[]
+  scoutings Scouting[]
 }
 
 model Training {
@@ -254,4 +259,14 @@ model DefaultFormation {
   id        String   @id
   slots     String[]
   updatedAt DateTime @updatedAt
+}
+
+model Scouting {
+  id        String   @id @default(cuid())
+  rivalId   String
+  date      DateTime
+  scoutName String?
+  notes     String?
+  createdAt DateTime @default(now())
+  rival     Rival    @relation(fields: [rivalId], references: [id], onDelete: Cascade)
 }

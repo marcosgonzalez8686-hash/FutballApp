@@ -27,9 +27,9 @@ export default async function ClubesPage() {
               className="rounded-lg border border-gray-200 bg-white p-4 hover:border-green-600"
             >
               <p className="font-medium text-gray-900">{rival.name}</p>
-              {rival.notes && (
+              {(rival.venue || rival.phone) && (
                 <p className="mt-1 line-clamp-2 text-sm text-gray-500">
-                  {rival.notes}
+                  {[rival.venue, rival.phone].filter(Boolean).join(" · ")}
                 </p>
               )}
             </Link>

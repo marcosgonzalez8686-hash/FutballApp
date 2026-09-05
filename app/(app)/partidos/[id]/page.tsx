@@ -139,6 +139,13 @@ export default async function PartidoDetailPage({
           <p className="font-medium text-gray-900">Alineación</p>
           <p className="text-sm text-gray-500">{lineupCount}/11 jugadores colocados</p>
         </Link>
+        <Link
+          href={`/base-datos/clubes/${match.rivalId}/ojeo`}
+          className="rounded-lg border border-gray-200 bg-white p-4 hover:border-green-600"
+        >
+          <p className="font-medium text-gray-900">Ojeo del rival</p>
+          <p className="text-sm text-gray-500">Consultar o añadir ojeos de {match.rival.name}</p>
+        </Link>
       </div>
 
       {whatsappUrl && (
