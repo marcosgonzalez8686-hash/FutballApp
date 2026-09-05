@@ -243,6 +243,15 @@ export function LineupBoard({
                   <div className="h-8 w-8 rounded-full border-2 border-dashed border-white/50" />
                 )}
 
+                {slot?.playerName && (
+                  <div
+                    className="pointer-events-none absolute left-1/2 top-full mt-0.5 w-16 -translate-x-1/2 truncate text-center text-[9px] font-medium text-white"
+                    style={{ textShadow: "0 1px 2px rgba(0,0,0,0.7)" }}
+                  >
+                    {slot.playerName}
+                  </div>
+                )}
+
                 {openSlotId === slotId && (
                   <div className="absolute left-1/2 top-full z-20 mt-1 w-44 -translate-x-1/2 rounded-md border border-gray-200 bg-white p-1 text-left shadow-lg">
                     <button

@@ -41,14 +41,22 @@ export default async function ListaOjeosPage({
                     {formatDate(scouting.date)}
                     {scouting.scoutName && ` · ${scouting.scoutName}`}
                   </p>
-                  <form action={deleteWithIds}>
-                    <button
-                      type="submit"
-                      className="text-xs text-gray-400 hover:underline"
+                  <div className="flex items-center gap-3">
+                    <Link
+                      href={`/base-datos/clubes/${id}/ojeo/${scouting.id}/editar`}
+                      className="text-xs text-green-700 hover:underline"
                     >
-                      Quitar
-                    </button>
-                  </form>
+                      Editar
+                    </Link>
+                    <form action={deleteWithIds}>
+                      <button
+                        type="submit"
+                        className="text-xs text-gray-400 hover:underline"
+                      >
+                        Quitar
+                      </button>
+                    </form>
+                  </div>
                 </div>
                 {scouting.bpOfensivo && (
                   <p className="mt-2 whitespace-pre-line text-sm text-gray-500">

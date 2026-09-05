@@ -57,6 +57,7 @@ export default async function PartidoDetailPage({
       `CONVOCATORIA (${match.competition})`,
       `${match.isHome ? "VS" : "@"} ${match.rival.name}`,
       `${formatWeekdayDayMonth(match.date)}.`,
+      ...(!match.isHome && match.rival.venue ? [`Campo: ${match.rival.venue}`] : []),
       `Hora de partido: ${formatHourMinute(match.date)}`,
       `Hora en el campo: ${formatHourMinute(arrivalTime)}`,
       "",
