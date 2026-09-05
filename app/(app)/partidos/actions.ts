@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { TOTAL_LINEUP_DOLLS } from "@/lib/formation";
 import { parseConceptId } from "@/lib/fines";
+import { getCurrentSeasonId } from "@/lib/season";
 import type {
   MatchStatus,
   Competition,
@@ -29,7 +30,8 @@ function parseMatchForm(formData: FormData) {
 
 export async function createMatch(formData: FormData) {
   const data = parseMatchForm(formData);
-  const match = await prisma.match.create({ data });
+  const seasonId = await getCurrentSeasonId();
+  const match = await prisma.match.create({ data: { ...data, seasonId } });
   revalidatePath("/partidos");
   redirect(`/partidos/${match.id}`);
 }

@@ -113,7 +113,9 @@ model Training {
   date        DateTime
   duration    Int?
   notes       String?
+  seasonId    String
   createdAt   DateTime              @default(now())
+  season         Season                  @relation(fields: [seasonId], references: [id], onDelete: Restrict)
   attendances    TrainingAttendance[]
   exercises      TrainingExercise[]
   materialChecks TrainingMaterialCheck[]
@@ -193,12 +195,23 @@ model Match {
   rivalScore  Int?
   status      MatchStatus @default(PROGRAMADO)
   notes       String?
+  seasonId    String
   createdAt   DateTime    @default(now())
   rival       Rival       @relation(fields: [rivalId], references: [id], onDelete: Restrict)
+  season      Season      @relation(fields: [seasonId], references: [id], onDelete: Restrict)
   callups     MatchCallup[]
   fines       Fine[]
   events      MatchEvent[]
   lineupSlots MatchLineupSlot[]
+}
+
+model Season {
+  id        String     @id @default(cuid())
+  name      String
+  isCurrent Boolean    @default(false)
+  createdAt DateTime   @default(now())
+  trainings Training[]
+  matches   Match[]
 }
 
 model Fine {

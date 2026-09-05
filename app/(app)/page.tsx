@@ -1,20 +1,22 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { formatDate, formatDateTime } from "@/lib/format";
+import { getCurrentSeasonId } from "@/lib/season";
 
 export default async function DashboardPage() {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const seasonId = await getCurrentSeasonId();
 
   const [nextTraining, nextMatch, playerCount, rivalCount] =
     await Promise.all([
       prisma.training.findFirst({
-        where: { date: { gte: today } },
+        where: { seasonId, date: { gte: today } },
         orderBy: { date: "asc" },
         include: { exercises: true },
       }),
       prisma.match.findFirst({
-        where: { date: { gte: now }, status: "PROGRAMADO" },
+        where: { seasonId, date: { gte: now }, status: "PROGRAMADO" },
         orderBy: { date: "asc" },
         include: { rival: true },
       }),

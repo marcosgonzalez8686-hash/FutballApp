@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { PlayerForm } from "@/components/PlayerForm";
 import { DeleteButton } from "@/components/DeleteButton";
 import { updatePlayer, removeFromSquad } from "../actions";
+import { getCurrentSeason } from "@/lib/season";
 
 export default async function JugadorPlantillaDetailPage({
   params,
@@ -11,11 +12,12 @@ export default async function JugadorPlantillaDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const season = await getCurrentSeason();
   const [player, eventCounts] = await Promise.all([
     prisma.player.findUnique({ where: { id } }),
     prisma.matchEvent.groupBy({
       by: ["type"],
-      where: { playerId: id },
+      where: { playerId: id, match: { seasonId: season.id } },
       _count: true,
     }),
   ]);
@@ -33,7 +35,9 @@ export default async function JugadorPlantillaDetailPage({
       <h1 className="text-2xl font-semibold text-gray-900">{player.name}</h1>
 
       <div className="max-w-lg rounded-lg border border-gray-200 bg-white p-6">
-        <h3 className="mb-3 text-sm font-medium text-gray-500">Estadísticas en partidos</h3>
+        <h3 className="mb-3 text-sm font-medium text-gray-500">
+          Estadísticas en partidos (temporada {season.name})
+        </h3>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div>
             <p className="text-lg font-semibold text-gray-900">{countFor("GOL")}</p>

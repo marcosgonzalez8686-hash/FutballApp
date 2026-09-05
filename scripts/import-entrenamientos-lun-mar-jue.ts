@@ -35,7 +35,7 @@ async function main() {
       skipped++;
       continue;
     }
-    await prisma.training.create({ data: { date } });
+    await prisma.training.create({ data: { date, seasonId: "season-2026-2027" } });
     created++;
   }
 

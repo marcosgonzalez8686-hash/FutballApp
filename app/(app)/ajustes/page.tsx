@@ -1,9 +1,15 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { ChangePasswordForm } from "./ChangePasswordForm";
+import { SeasonForm } from "./SeasonForm";
 
 export default async function AjustesPage() {
-  const session = await auth();
+  const [session, seasons] = await Promise.all([
+    auth(),
+    prisma.season.findMany({ orderBy: { createdAt: "desc" } }),
+  ]);
+  const currentSeason = seasons.find((s) => s.isCurrent);
 
   return (
     <div className="flex flex-col gap-6">
@@ -27,6 +33,37 @@ export default async function AjustesPage() {
         >
           Gestionar usuarios
         </Link>
+      </div>
+
+      <div className="max-w-md rounded-lg border border-gray-200 bg-white p-6">
+        <h2 className="mb-1 text-sm font-medium text-gray-900">Temporada</h2>
+        <p className="mb-4 text-sm text-gray-500">
+          Temporada vigente:{" "}
+          <span className="font-medium text-gray-700">
+            {currentSeason?.name ?? "Sin definir"}
+          </span>
+          . Entrenamientos, partidos y estadísticas de jugadores solo muestran
+          los datos de la temporada vigente; las multas no dependen de la
+          temporada.
+        </p>
+        <SeasonForm currentSeasonName={currentSeason?.name ?? ""} />
+
+        {seasons.length > 1 && (
+          <div className="mt-4 border-t border-gray-100 pt-4">
+            <p className="mb-2 text-xs font-medium text-gray-500">
+              Temporadas anteriores
+            </p>
+            <ul className="flex flex-col gap-1">
+              {seasons
+                .filter((s) => !s.isCurrent)
+                .map((s) => (
+                  <li key={s.id} className="text-sm text-gray-600">
+                    {s.name}
+                  </li>
+                ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

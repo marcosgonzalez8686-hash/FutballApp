@@ -167,6 +167,7 @@ async function main() {
         isHome: m.isHome,
         competition: "LIGA",
         status: "PROGRAMADO",
+        seasonId: "season-2026-2027",
       },
     });
     console.log(

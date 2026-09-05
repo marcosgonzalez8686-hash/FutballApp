@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { getCurrentSeasonId } from "@/lib/season";
 import { MatchList } from "../MatchList";
 
 export default async function PartidosFinalizadosPage() {
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
+  const seasonId = await getCurrentSeasonId();
 
   const matches = await prisma.match.findMany({
-    where: { date: { lt: startOfToday } },
+    where: { seasonId, date: { lt: startOfToday } },
     orderBy: { date: "desc" },
     include: { rival: true },
   });

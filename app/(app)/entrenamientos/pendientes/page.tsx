@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { getCurrentSeasonId } from "@/lib/season";
 import { TrainingList } from "../TrainingList";
 
 export default async function EntrenamientosPendientesPage() {
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
+  const seasonId = await getCurrentSeasonId();
 
   const trainings = await prisma.training.findMany({
-    where: { date: { gte: startOfToday } },
+    where: { seasonId, date: { gte: startOfToday } },
     orderBy: { date: "asc" },
     include: {
       _count: { select: { exercises: true } },

@@ -1,6 +1,7 @@
 "use server";
 
 import bcrypt from "bcryptjs";
+import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -48,4 +49,19 @@ export async function changePassword(
   });
 
   return "OK";
+}
+
+export async function changeSeason(formData: FormData) {
+  const name = (formData.get("name") as string)?.trim();
+  if (!name) return;
+
+  await prisma.$transaction([
+    prisma.season.updateMany({ where: { isCurrent: true }, data: { isCurrent: false } }),
+    prisma.season.create({ data: { name, isCurrent: true } }),
+  ]);
+
+  revalidatePath("/ajustes");
+  revalidatePath("/");
+  revalidatePath("/entrenamientos");
+  revalidatePath("/partidos");
 }

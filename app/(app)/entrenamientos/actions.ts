@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import type { AttendanceStatus } from "@/app/generated/prisma/enums";
 import { parseConceptId } from "@/lib/fines";
+import { getCurrentSeasonId } from "@/lib/season";
 
 function parseTrainingForm(formData: FormData) {
   const date = formData.get("date") as string;
@@ -28,7 +29,8 @@ async function recalculateDuration(trainingId: string) {
 
 export async function createTraining(formData: FormData) {
   const data = parseTrainingForm(formData);
-  const training = await prisma.training.create({ data });
+  const seasonId = await getCurrentSeasonId();
+  const training = await prisma.training.create({ data: { ...data, seasonId } });
   revalidatePath("/entrenamientos");
   redirect(`/entrenamientos/${training.id}`);
 }
