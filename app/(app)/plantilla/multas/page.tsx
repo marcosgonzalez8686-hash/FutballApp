@@ -1,6 +1,34 @@
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 
-export default function GestionMultasPage() {
+export default async function GestionMultasPage() {
+  const players = await prisma.player.findMany({
+    where: { inSquad: true },
+    include: { fines: { where: { paid: false } } },
+    orderBy: { name: "asc" },
+  });
+
+  const rows = players
+    .filter((p) => p.fines.length > 0)
+    .map((p) => ({
+      name: p.name,
+      total: p.fines.reduce((sum, f) => sum + f.amount, 0),
+    }));
+
+  const grandTotal = rows.reduce((sum, r) => sum + r.total, 0);
+
+  let whatsappUrl: string | null = null;
+  if (rows.length > 0) {
+    const lines = [
+      "MULTAS PENDIENTES",
+      "",
+      ...rows.map((r) => `${r.name}: ${r.total.toFixed(2)} €`),
+      "",
+      `Total: ${grandTotal.toFixed(2)} €`,
+    ];
+    whatsappUrl = `https://wa.me/?text=${encodeURIComponent(lines.join("\n"))}`;
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-2xl font-semibold text-gray-900">Gestión de multas</h1>
@@ -11,6 +39,17 @@ export default function GestionMultasPage() {
       >
         Nueva multa
       </Link>
+
+      {whatsappUrl && (
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex max-w-lg items-center justify-center gap-2 rounded-md bg-[#25D366] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+        >
+          Enviar multas por WhatsApp
+        </a>
+      )}
 
       <div className="flex max-w-lg flex-col gap-3">
         <Link
