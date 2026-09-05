@@ -9,6 +9,30 @@ export const FORMATION_ROWS = [
 
 export type FormationRowKey = (typeof FORMATION_ROWS)[number]["key"];
 
+export const ROW_POSITIONS: Record<FormationRowKey, string[]> = {
+  POR: ["POR"],
+  DEF: ["DFC", "LTD", "LTI"],
+  CARR: ["LTD", "LTI", "MDC"],
+  MC: ["MDC", "MPC"],
+  MP: ["MPC", "EXD", "EXI"],
+  DEL: ["DEL"],
+};
+
+export function rowKeyFromSlotId(slotId: string): FormationRowKey | null {
+  const key = slotId.split("-")[0];
+  return (FORMATION_ROWS.find((r) => r.key === key)?.key as FormationRowKey) ?? null;
+}
+
+export function matchesRow(
+  rowKey: FormationRowKey,
+  position: string | null,
+  secondaryPosition: string | null
+): boolean {
+  const valid = ROW_POSITIONS[rowKey];
+  return (position !== null && valid.includes(position)) ||
+    (secondaryPosition !== null && valid.includes(secondaryPosition));
+}
+
 export function allSlotIds(): string[] {
   return FORMATION_ROWS.flatMap((row) =>
     Array.from({ length: row.count }, (_, i) => `${row.key}-${i}`)

@@ -2,7 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { allSlotIds, slotPosition, TOTAL_LINEUP_DOLLS } from "@/lib/formation";
+import {
+  allSlotIds,
+  slotPosition,
+  rowKeyFromSlotId,
+  matchesRow,
+  TOTAL_LINEUP_DOLLS,
+} from "@/lib/formation";
 
 type LineupSlotData = {
   slotId: string;
@@ -10,7 +16,12 @@ type LineupSlotData = {
   playerName: string | null;
 };
 
-type CalledPlayer = { id: string; name: string };
+type CalledPlayer = {
+  id: string;
+  displayName: string;
+  position: string | null;
+  secondaryPosition: string | null;
+};
 
 export function LineupBoard({
   slots,
@@ -44,6 +55,32 @@ export function LineupBoard({
   const benchCount = TOTAL_LINEUP_DOLLS - slots.length;
   const assignedIds = new Set(slots.filter((s) => s.playerId).map((s) => s.playerId));
   const remainingCalled = calledPlayers.filter((p) => !assignedIds.has(p.id));
+
+  const openRowKey = openSlotId ? rowKeyFromSlotId(openSlotId) : null;
+  const popoverOptions = openRowKey
+    ? [...remainingCalled].sort((a, b) => {
+        const aMatch = matchesRow(openRowKey, a.position, a.secondaryPosition) ? 0 : 1;
+        const bMatch = matchesRow(openRowKey, b.position, b.secondaryPosition) ? 0 : 1;
+        if (aMatch !== bMatch) return aMatch - bMatch;
+        return a.displayName.localeCompare(b.displayName);
+      })
+    : remainingCalled;
+
+  // Cierra el desplegable si se pulsa fuera de su casilla (muñeco + menú),
+  // sin bloquear el resto de interacciones (arrastrar u otro muñeco)
+  // mientras está abierto, y sin interferir con volver a tocar el mismo
+  // muñeco para cerrarlo.
+  useEffect(() => {
+    if (!openSlotId) return;
+    function onPointerDownCapture(e: PointerEvent) {
+      const wrapper = slotRefs.current.get(openSlotId as string);
+      if (wrapper && !wrapper.contains(e.target as Node)) {
+        setOpenSlotId(null);
+      }
+    }
+    window.addEventListener("pointerdown", onPointerDownCapture, true);
+    return () => window.removeEventListener("pointerdown", onPointerDownCapture, true);
+  }, [openSlotId]);
 
   function handlePointerDown(
     e: React.PointerEvent<HTMLDivElement>,
@@ -99,14 +136,24 @@ export function LineupBoard({
       dragStartRef.current = null;
       setGhost(null);
 
-      if (distance < 8) {
+      const treatAsTap = () => {
         if (start.sourceSlotId !== null) {
-          setOpenSlotId(start.sourceSlotId);
+          setOpenSlotId((prev) => (prev === start.sourceSlotId ? null : start.sourceSlotId));
         }
+      };
+
+      if (distance < 12) {
+        treatAsTap();
         return;
       }
 
       const targetSlotId = findSlotAt(e.clientX, e.clientY);
+      if (targetSlotId === start.sourceSlotId) {
+        // Se soltó prácticamente en el mismo sitio: lo tratamos como un toque.
+        treatAsTap();
+        return;
+      }
+
       if (targetSlotId) {
         void performMove(start.sourceSlotId, targetSlotId);
       } else if (isWithinBench(e.clientX, e.clientY)) {
@@ -157,10 +204,6 @@ export function LineupBoard({
 
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
-      {openSlotId && (
-        <div className="fixed inset-0 z-10" onClick={() => setOpenSlotId(null)} />
-      )}
-
       <div className="flex flex-col gap-3">
         <div
           className="relative mx-auto w-full max-w-sm rounded-lg border border-green-900"
@@ -201,28 +244,25 @@ export function LineupBoard({
                 )}
 
                 {openSlotId === slotId && (
-                  <div
-                    className="absolute left-1/2 top-full z-20 mt-1 w-44 -translate-x-1/2 rounded-md border border-gray-200 bg-white p-1 text-left shadow-lg"
-                    onClick={(e) => e.stopPropagation()}
-                  >
+                  <div className="absolute left-1/2 top-full z-20 mt-1 w-44 -translate-x-1/2 rounded-md border border-gray-200 bg-white p-1 text-left shadow-lg">
                     <button
                       type="button"
                       onClick={() => void handleAssign(slotId, null)}
-                      className="block w-full rounded px-2 py-1 text-left text-xs text-gray-500 hover:bg-gray-100"
+                      className="block w-full rounded px-2 py-2 text-left text-xs text-gray-500 hover:bg-gray-100"
                     >
                       Sin asignar
                     </button>
-                    {remainingCalled.map((p) => (
+                    {popoverOptions.map((p) => (
                       <button
                         key={p.id}
                         type="button"
                         onClick={() => void handleAssign(slotId, p.id)}
-                        className="block w-full truncate rounded px-2 py-1 text-left text-xs text-gray-900 hover:bg-gray-100"
+                        className="block w-full truncate rounded px-2 py-2 text-left text-xs text-gray-900 hover:bg-gray-100"
                       >
-                        {p.name}
+                        {p.displayName}
                       </button>
                     ))}
-                    {remainingCalled.length === 0 && (
+                    {popoverOptions.length === 0 && (
                       <p className="px-2 py-1 text-xs text-gray-400">
                         No hay más convocados libres.
                       </p>
@@ -281,7 +321,7 @@ export function LineupBoard({
           <ul className="flex flex-col gap-1">
             {remainingCalled.map((p) => (
               <li key={p.id} className="text-sm text-gray-700">
-                {p.name}
+                {p.displayName}
               </li>
             ))}
           </ul>

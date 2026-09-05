@@ -1,5 +1,9 @@
 import type { DominantFoot, PlayerAvailability } from "@/app/generated/prisma/enums";
 
+export function displayName(player: { name: string; nickname?: string | null }): string {
+  return player.nickname || player.name;
+}
+
 export function parsePlayerForm(formData: FormData) {
   const birthDate = formData.get("birthDate") as string;
   const dominantFoot = formData.get("dominantFoot") as string;

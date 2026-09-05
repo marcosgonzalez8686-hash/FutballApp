@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { displayName } from "@/lib/players";
 import {
   moveLineupDoll,
   assignLineupPlayer,
@@ -61,11 +62,13 @@ export default async function AlineacionPage({
         slots={slots.map((s) => ({
           slotId: s.slotId,
           playerId: s.playerId,
-          playerName: s.player?.name ?? null,
+          playerName: s.player ? displayName(s.player) : null,
         }))}
         calledPlayers={calledPlayers.map((c) => ({
           id: c.player.id,
-          name: c.player.name,
+          displayName: displayName(c.player),
+          position: c.player.position,
+          secondaryPosition: c.player.secondaryPosition,
         }))}
         moveDoll={moveDoll}
         assignPlayer={assignPlayer}
