@@ -49,6 +49,42 @@ export default async function NuevoOjeoPage({
           </div>
 
           <div>
+            <label htmlFor="bpOfensivo" className="block text-sm font-medium text-gray-700">
+              BP Ofensivo
+            </label>
+            <textarea
+              id="bpOfensivo"
+              name="bpOfensivo"
+              rows={3}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="bpDefensivo" className="block text-sm font-medium text-gray-700">
+              BP Defensivo
+            </label>
+            <textarea
+              id="bpDefensivo"
+              name="bpDefensivo"
+              rows={3}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="salidaBalon" className="block text-sm font-medium text-gray-700">
+              Salida de balón
+            </label>
+            <textarea
+              id="salidaBalon"
+              name="salidaBalon"
+              rows={3}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none"
+            />
+          </div>
+
+          <div>
             <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
               Notas
             </label>

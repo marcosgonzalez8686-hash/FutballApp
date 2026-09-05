@@ -7,12 +7,23 @@ import { prisma } from "@/lib/prisma";
 export async function createScouting(rivalId: string, formData: FormData) {
   const date = formData.get("date") as string;
   const scoutName = (formData.get("scoutName") as string) || null;
+  const bpOfensivo = (formData.get("bpOfensivo") as string) || null;
+  const bpDefensivo = (formData.get("bpDefensivo") as string) || null;
+  const salidaBalon = (formData.get("salidaBalon") as string) || null;
   const notes = (formData.get("notes") as string) || null;
 
   if (!date) return;
 
   await prisma.scouting.create({
-    data: { rivalId, date: new Date(date), scoutName, notes },
+    data: {
+      rivalId,
+      date: new Date(date),
+      scoutName,
+      bpOfensivo,
+      bpDefensivo,
+      salidaBalon,
+      notes,
+    },
   });
 
   revalidatePath(`/base-datos/clubes/${rivalId}/ojeo/lista`);

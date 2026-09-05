@@ -50,8 +50,27 @@ export default async function ListaOjeosPage({
                     </button>
                   </form>
                 </div>
+                {scouting.bpOfensivo && (
+                  <p className="mt-2 whitespace-pre-line text-sm text-gray-500">
+                    <span className="font-medium text-gray-700">BP Ofensivo: </span>
+                    {scouting.bpOfensivo}
+                  </p>
+                )}
+                {scouting.bpDefensivo && (
+                  <p className="mt-1 whitespace-pre-line text-sm text-gray-500">
+                    <span className="font-medium text-gray-700">BP Defensivo: </span>
+                    {scouting.bpDefensivo}
+                  </p>
+                )}
+                {scouting.salidaBalon && (
+                  <p className="mt-1 whitespace-pre-line text-sm text-gray-500">
+                    <span className="font-medium text-gray-700">Salida de balón: </span>
+                    {scouting.salidaBalon}
+                  </p>
+                )}
                 {scouting.notes && (
                   <p className="mt-1 whitespace-pre-line text-sm text-gray-500">
+                    <span className="font-medium text-gray-700">Notas: </span>
                     {scouting.notes}
                   </p>
                 )}

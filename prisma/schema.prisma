@@ -262,11 +262,14 @@ model DefaultFormation {
 }
 
 model Scouting {
-  id        String   @id @default(cuid())
-  rivalId   String
-  date      DateTime
-  scoutName String?
-  notes     String?
-  createdAt DateTime @default(now())
-  rival     Rival    @relation(fields: [rivalId], references: [id], onDelete: Cascade)
+  id             String   @id @default(cuid())
+  rivalId        String
+  date           DateTime
+  scoutName      String?
+  bpOfensivo     String?
+  bpDefensivo    String?
+  salidaBalon    String?
+  notes          String?
+  createdAt      DateTime @default(now())
+  rival          Rival    @relation(fields: [rivalId], references: [id], onDelete: Cascade)
 }
