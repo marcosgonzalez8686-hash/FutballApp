@@ -35,12 +35,6 @@ enum Competition {
   COPA
 }
 
-enum FineReason {
-  TARDE
-  AUSENCIA_NO_JUSTIFICADA
-  OTROS
-}
-
 enum PlayerAvailability {
   DISPONIBLE
   LESIONADO
@@ -208,18 +202,28 @@ model Match {
 }
 
 model Fine {
-  id         String     @id @default(cuid())
+  id         String       @id @default(cuid())
   playerId   String
   trainingId String?
   matchId    String?
+  conceptId  String?
   amount     Float
-  reason     FineReason
   comment    String?
-  paid       Boolean    @default(false)
-  createdAt  DateTime   @default(now())
-  player     Player     @relation(fields: [playerId], references: [id], onDelete: Cascade)
-  training   Training?  @relation(fields: [trainingId], references: [id], onDelete: Cascade)
-  match      Match?     @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  paid       Boolean      @default(false)
+  createdAt  DateTime     @default(now())
+  player     Player       @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  training   Training?    @relation(fields: [trainingId], references: [id], onDelete: Cascade)
+  match      Match?       @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  concept    FineConcept? @relation(fields: [conceptId], references: [id], onDelete: SetNull)
+}
+
+model FineConcept {
+  id        String   @id @default(cuid())
+  name      String
+  category  String?
+  amount    Float
+  createdAt DateTime @default(now())
+  fines     Fine[]
 }
 
 model MatchCallup {

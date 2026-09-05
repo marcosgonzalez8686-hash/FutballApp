@@ -32,6 +32,16 @@ export default function GestionMultasPage() {
             Importe cobrado por jugador
           </p>
         </Link>
+
+        <Link
+          href="/plantilla/multas/conceptos"
+          className="rounded-lg border border-gray-200 bg-white p-6 hover:border-green-600"
+        >
+          <p className="font-medium text-gray-900">Conceptos de multa</p>
+          <p className="text-sm text-gray-500">
+            Catálogo de motivos e importes por defecto
+          </p>
+        </Link>
       </div>
 
       <Link

@@ -4,17 +4,20 @@ import { FineForm } from "@/components/FineForm";
 import { createStandaloneFine } from "../../actions";
 
 export default async function NuevaMultaPage() {
-  const players = await prisma.player.findMany({
-    where: { inSquad: true },
-    orderBy: { name: "asc" },
-  });
+  const [players, concepts] = await Promise.all([
+    prisma.player.findMany({
+      where: { inSquad: true },
+      orderBy: { name: "asc" },
+    }),
+    prisma.fineConcept.findMany({ orderBy: [{ category: "asc" }, { name: "asc" }] }),
+  ]);
 
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-2xl font-semibold text-gray-900">Nueva multa</h1>
 
       <div className="max-w-lg rounded-lg border border-gray-200 bg-white p-6">
-        <FineForm players={players} action={createStandaloneFine} />
+        <FineForm players={players} concepts={concepts} action={createStandaloneFine} />
       </div>
 
       <Link

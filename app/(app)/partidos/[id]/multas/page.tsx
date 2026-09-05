@@ -3,12 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { FineForm } from "@/components/FineForm";
 import { addMatchFine, deleteMatchFine } from "../../actions";
 
-const reasonLabels = {
-  TARDE: "Llega tarde",
-  AUSENCIA_NO_JUSTIFICADA: "Ausencia no justificada",
-  OTROS: "Otros",
-};
-
 export default async function MultasPartidoPage({
   params,
 }: {
@@ -16,12 +10,13 @@ export default async function MultasPartidoPage({
 }) {
   const { id } = await params;
 
-  const [match, players, fines] = await Promise.all([
+  const [match, players, concepts, fines] = await Promise.all([
     prisma.match.findUnique({ where: { id } }),
     prisma.player.findMany({ where: { inSquad: true }, orderBy: { name: "asc" } }),
+    prisma.fineConcept.findMany({ orderBy: [{ category: "asc" }, { name: "asc" }] }),
     prisma.fine.findMany({
       where: { matchId: id },
-      include: { player: true },
+      include: { player: true, concept: true },
       orderBy: { createdAt: "desc" },
     }),
   ]);
@@ -37,7 +32,7 @@ export default async function MultasPartidoPage({
 
       <div className="max-w-lg rounded-lg border border-gray-200 bg-white p-6">
         <h3 className="mb-3 text-sm font-medium text-gray-500">Añadir multa</h3>
-        <FineForm players={players} action={addFineWithId} />
+        <FineForm players={players} concepts={concepts} action={addFineWithId} />
       </div>
 
       <div className="max-w-lg rounded-lg border border-gray-200 bg-white p-6">
@@ -61,7 +56,7 @@ export default async function MultasPartidoPage({
                       {fine.player.name} · {fine.amount.toFixed(2)} €
                     </p>
                     <p className="text-xs text-gray-400">
-                      {reasonLabels[fine.reason]}
+                      {fine.concept?.name ?? "Otro"}
                       {fine.comment && ` — ${fine.comment}`}
                     </p>
                   </div>

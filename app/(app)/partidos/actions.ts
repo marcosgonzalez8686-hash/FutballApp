@@ -4,10 +4,10 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { TOTAL_LINEUP_DOLLS } from "@/lib/formation";
+import { parseConceptId } from "@/lib/fines";
 import type {
   MatchStatus,
   Competition,
-  FineReason,
   MatchEventType,
 } from "@/app/generated/prisma/enums";
 
@@ -94,17 +94,17 @@ export async function toggleMatchUnavailable(
 export async function addMatchFine(matchId: string, formData: FormData) {
   const playerId = formData.get("playerId") as string;
   const amountRaw = formData.get("amount") as string;
-  const reason = formData.get("reason") as FineReason;
+  const conceptId = parseConceptId(formData);
   const comment = (formData.get("comment") as string) || null;
 
-  if (!playerId || !amountRaw || !reason) return;
+  if (!playerId || !amountRaw) return;
 
   await prisma.fine.create({
     data: {
       playerId,
       matchId,
       amount: parseFloat(amountRaw),
-      reason,
+      conceptId,
       comment,
     },
   });

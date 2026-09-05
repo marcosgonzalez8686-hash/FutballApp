@@ -3,7 +3,8 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import type { AttendanceStatus, FineReason } from "@/app/generated/prisma/enums";
+import type { AttendanceStatus } from "@/app/generated/prisma/enums";
+import { parseConceptId } from "@/lib/fines";
 
 function parseTrainingForm(formData: FormData) {
   const date = formData.get("date") as string;
@@ -130,17 +131,17 @@ export async function toggleMaterialCollected(
 export async function addTrainingFine(trainingId: string, formData: FormData) {
   const playerId = formData.get("playerId") as string;
   const amountRaw = formData.get("amount") as string;
-  const reason = formData.get("reason") as FineReason;
+  const conceptId = parseConceptId(formData);
   const comment = (formData.get("comment") as string) || null;
 
-  if (!playerId || !amountRaw || !reason) return;
+  if (!playerId || !amountRaw) return;
 
   await prisma.fine.create({
     data: {
       playerId,
       trainingId,
       amount: parseFloat(amountRaw),
-      reason,
+      conceptId,
       comment,
     },
   });

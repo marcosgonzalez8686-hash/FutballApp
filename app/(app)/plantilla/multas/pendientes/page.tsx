@@ -4,12 +4,6 @@ import { formatDate } from "@/lib/format";
 import { AutoSubmitCheckbox } from "@/components/AutoSubmitCheckbox";
 import { toggleFinePaid, markAllFinesPaidForPlayer } from "../actions";
 
-const reasonLabels = {
-  TARDE: "Llega tarde",
-  AUSENCIA_NO_JUSTIFICADA: "Ausencia no justificada",
-  OTROS: "Otros",
-};
-
 export default async function MultasPendientesPage() {
   const players = await prisma.player.findMany({
     where: { inSquad: true },
@@ -20,6 +14,7 @@ export default async function MultasPendientesPage() {
         include: {
           training: true,
           match: { include: { rival: true } },
+          concept: true,
         },
       },
     },
@@ -83,7 +78,7 @@ export default async function MultasPendientesPage() {
                     >
                       <div>
                         <p className="text-sm text-gray-900">
-                          {fine.amount.toFixed(2)} € · {reasonLabels[fine.reason]}
+                          {fine.amount.toFixed(2)} € · {fine.concept?.name ?? "Otro"}
                         </p>
                         <p className="text-xs text-gray-400">
                           {contextLabel(fine)}

@@ -1,13 +1,8 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { FineForm } from "@/components/FineForm";
+import { AUTO_FINE_CONCEPT_BY_STATUS } from "@/lib/fines";
 import { addTrainingFine, deleteTrainingFine } from "../../actions";
-
-const reasonLabels = {
-  TARDE: "Llega tarde",
-  AUSENCIA_NO_JUSTIFICADA: "Ausencia no justificada",
-  OTROS: "Otros",
-};
 
 export default async function MultasEntrenamientoPage({
   params,
@@ -16,27 +11,36 @@ export default async function MultasEntrenamientoPage({
 }) {
   const { id } = await params;
 
-  const [training, players, fines] = await Promise.all([
+  const [training, players, concepts, fines] = await Promise.all([
     prisma.training.findUnique({
       where: { id },
       include: { attendances: { include: { player: true } } },
     }),
     prisma.player.findMany({ where: { inSquad: true }, orderBy: { name: "asc" } }),
+    prisma.fineConcept.findMany({ orderBy: [{ category: "asc" }, { name: "asc" }] }),
     prisma.fine.findMany({
       where: { trainingId: id },
-      include: { player: true },
+      include: { player: true, concept: true },
       orderBy: { createdAt: "desc" },
     }),
   ]);
 
   if (!training) notFound();
 
-  const finedPlayerReasons = new Set(fines.map((f) => `${f.playerId}-${f.reason}`));
+  const conceptById = new Map(concepts.map((c) => [c.id, c]));
+
+  const finedPlayerConcepts = new Set(
+    fines.filter((f) => f.conceptId).map((f) => `${f.playerId}-${f.conceptId}`)
+  );
 
   const candidates = training.attendances
     .filter((a) => a.status === "AUSENCIA_NO_JUSTIFICADA" || a.status === "TARDE")
-    .map((a) => ({ player: a.player, reason: a.status as "AUSENCIA_NO_JUSTIFICADA" | "TARDE" }))
-    .filter((c) => !finedPlayerReasons.has(`${c.player.id}-${c.reason}`));
+    .map((a) => ({
+      player: a.player,
+      conceptId: AUTO_FINE_CONCEPT_BY_STATUS[a.status],
+    }))
+    .filter((c) => conceptById.has(c.conceptId))
+    .filter((c) => !finedPlayerConcepts.has(`${c.player.id}-${c.conceptId}`));
 
   const addFineWithId = addTrainingFine.bind(null, id);
   const totalAmount = fines.reduce((sum, f) => sum + f.amount, 0);
@@ -51,45 +55,47 @@ export default async function MultasEntrenamientoPage({
             Jugadores con incidencia en esta sesión
           </h3>
           <ul className="flex flex-col gap-2">
-            {candidates.map((c) => (
-              <li
-                key={`${c.player.id}-${c.reason}`}
-                className="flex items-center justify-between gap-4 rounded-md border border-gray-100 px-3 py-2"
-              >
-                <span className="text-sm text-gray-900">
-                  {c.player.name}{" "}
-                  <span className="text-xs text-gray-400">
-                    ({reasonLabels[c.reason]})
+            {candidates.map((c) => {
+              const concept = conceptById.get(c.conceptId)!;
+              return (
+                <li
+                  key={`${c.player.id}-${c.conceptId}`}
+                  className="flex items-center justify-between gap-4 rounded-md border border-gray-100 px-3 py-2"
+                >
+                  <span className="text-sm text-gray-900">
+                    {c.player.name}{" "}
+                    <span className="text-xs text-gray-400">({concept.name})</span>
                   </span>
-                </span>
-                <form action={addFineWithId} className="flex items-center gap-2">
-                  <input type="hidden" name="playerId" value={c.player.id} />
-                  <input type="hidden" name="reason" value={c.reason} />
-                  <input
-                    type="number"
-                    name="amount"
-                    step="0.01"
-                    min={0}
-                    required
-                    placeholder="€"
-                    className="w-20 rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-green-600 focus:outline-none"
-                  />
-                  <button
-                    type="submit"
-                    className="rounded-md bg-green-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-800"
-                  >
-                    Multar
-                  </button>
-                </form>
-              </li>
-            ))}
+                  <form action={addFineWithId} className="flex items-center gap-2">
+                    <input type="hidden" name="playerId" value={c.player.id} />
+                    <input type="hidden" name="conceptId" value={c.conceptId} />
+                    <input
+                      type="number"
+                      name="amount"
+                      step="0.01"
+                      min={0}
+                      required
+                      defaultValue={concept.amount}
+                      placeholder="€"
+                      className="w-20 rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-green-600 focus:outline-none"
+                    />
+                    <button
+                      type="submit"
+                      className="rounded-md bg-green-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-800"
+                    >
+                      Multar
+                    </button>
+                  </form>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}
 
       <div className="max-w-lg rounded-lg border border-gray-200 bg-white p-6">
         <h3 className="mb-3 text-sm font-medium text-gray-500">Añadir multa</h3>
-        <FineForm players={players} action={addFineWithId} />
+        <FineForm players={players} concepts={concepts} action={addFineWithId} />
       </div>
 
       <div className="max-w-lg rounded-lg border border-gray-200 bg-white p-6">
@@ -113,7 +119,7 @@ export default async function MultasEntrenamientoPage({
                       {fine.player.name} · {fine.amount.toFixed(2)} €
                     </p>
                     <p className="text-xs text-gray-400">
-                      {reasonLabels[fine.reason]}
+                      {fine.concept?.name ?? "Otro"}
                       {fine.comment && ` — ${fine.comment}`}
                     </p>
                   </div>
