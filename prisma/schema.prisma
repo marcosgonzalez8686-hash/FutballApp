@@ -278,6 +278,12 @@ model DefaultFormation {
   updatedAt DateTime @updatedAt
 }
 
+model ClubSettings {
+  id        String   @id
+  venue     String?
+  updatedAt DateTime @updatedAt
+}
+
 model Scouting {
   id             String   @id @default(cuid())
   rivalId        String

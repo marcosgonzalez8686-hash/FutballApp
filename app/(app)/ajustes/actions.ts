@@ -65,3 +65,15 @@ export async function changeSeason(formData: FormData) {
   revalidatePath("/entrenamientos");
   revalidatePath("/partidos");
 }
+
+export async function updateClubVenue(formData: FormData) {
+  const venue = (formData.get("venue") as string)?.trim() || null;
+
+  await prisma.clubSettings.upsert({
+    where: { id: "default" },
+    update: { venue },
+    create: { id: "default", venue },
+  });
+
+  revalidatePath("/ajustes");
+}

@@ -3,11 +3,13 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ChangePasswordForm } from "./ChangePasswordForm";
 import { SeasonForm } from "./SeasonForm";
+import { updateClubVenue } from "./actions";
 
 export default async function AjustesPage() {
-  const [session, seasons] = await Promise.all([
+  const [session, seasons, clubSettings] = await Promise.all([
     auth(),
     prisma.season.findMany({ orderBy: { createdAt: "desc" } }),
+    prisma.clubSettings.findUnique({ where: { id: "default" } }),
   ]);
   const currentSeason = seasons.find((s) => s.isCurrent);
 
@@ -33,6 +35,34 @@ export default async function AjustesPage() {
         >
           Gestionar usuarios
         </Link>
+      </div>
+
+      <div className="max-w-md rounded-lg border border-gray-200 bg-white p-6">
+        <h2 className="mb-1 text-sm font-medium text-gray-900">Nuestro campo</h2>
+        <p className="mb-4 text-sm text-gray-500">
+          Se usa en el mensaje de WhatsApp de la convocatoria cuando jugamos en casa.
+        </p>
+        <form action={updateClubVenue} className="flex flex-col gap-3 sm:flex-row sm:items-end">
+          <div className="flex-1">
+            <label htmlFor="venue" className="block text-sm font-medium text-gray-700">
+              Nombre del campo
+            </label>
+            <input
+              id="venue"
+              name="venue"
+              type="text"
+              defaultValue={clubSettings?.venue ?? ""}
+              placeholder="Ej: Campo Municipal de Lavadores"
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none"
+            />
+          </div>
+          <button
+            type="submit"
+            className="rounded-md bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-800"
+          >
+            Guardar
+          </button>
+        </form>
       </div>
 
       <div className="max-w-md rounded-lg border border-gray-200 bg-white p-6">

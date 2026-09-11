@@ -24,7 +24,7 @@ export default async function PartidoDetailPage({
 }) {
   const { id } = await params;
 
-  const [match, calledPlayers, unavailableCount, fineTotal, eventCount, lineupCount] =
+  const [match, calledPlayers, unavailableCount, fineTotal, eventCount, lineupCount, clubSettings] =
     await Promise.all([
       prisma.match.findUnique({ where: { id }, include: { rival: true } }),
       prisma.matchCallup.findMany({
@@ -41,6 +41,7 @@ export default async function PartidoDetailPage({
       prisma.matchLineupSlot.count({
         where: { matchId: id, playerId: { not: null } },
       }),
+      prisma.clubSettings.findUnique({ where: { id: "default" } }),
     ]);
 
   if (!match) notFound();
@@ -57,7 +58,13 @@ export default async function PartidoDetailPage({
       `CONVOCATORIA (${match.competition})`,
       `${match.isHome ? "VS" : "@"} ${match.rival.name}`,
       `${formatWeekdayDayMonth(match.date)}.`,
-      ...(!match.isHome && match.rival.venue ? [`Campo: ${match.rival.venue}`] : []),
+      ...(match.isHome
+        ? clubSettings?.venue
+          ? [`Campo: ${clubSettings.venue}`]
+          : []
+        : match.rival.venue
+          ? [`Campo: ${match.rival.venue}`]
+          : []),
       `Hora de partido: ${formatHourMinute(match.date)}`,
       `Hora en el campo: ${formatHourMinute(arrivalTime)}`,
       "",

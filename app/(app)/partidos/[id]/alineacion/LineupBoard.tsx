@@ -227,7 +227,11 @@ export function LineupBoard({
                   else slotRefs.current.delete(slotId);
                 }}
                 className="absolute flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center"
-                style={{ top: `${pos.top}%`, left: `${pos.left}%` }}
+                style={{
+                  top: `${pos.top}%`,
+                  left: `${pos.left}%`,
+                  zIndex: openSlotId === slotId ? 50 : undefined,
+                }}
               >
                 {slot ? (
                   <div
