@@ -20,12 +20,12 @@ const oswald = Oswald({
 });
 
 export const metadata: Metadata = {
-  title: "Club Fútbol",
+  title: "AD Lavadores",
   description: "Gestión de jugadores, entrenamientos, partidos y rivales",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Club Fútbol",
+    title: "AD Lavadores",
   },
 };
 
