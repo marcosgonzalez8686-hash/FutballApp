@@ -1,5 +1,5 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
+import { SectionTab } from "@/components/NavLink";
 
 const tabs = [
   { href: "/partidos/pendientes", label: "Pendientes" },
@@ -13,13 +13,9 @@ export default function PartidosLayout({ children }: { children: ReactNode }) {
         <h1 className="text-2xl font-semibold text-gray-900">Partidos</h1>
         <div className="mt-3 flex gap-1 border-b border-gray-200 text-sm">
           {tabs.map((tab) => (
-            <Link
-              key={tab.href}
-              href={tab.href}
-              className="whitespace-nowrap rounded-t-md px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-            >
+            <SectionTab key={tab.href} href={tab.href}>
               {tab.label}
-            </Link>
+            </SectionTab>
           ))}
         </div>
       </div>

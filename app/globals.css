@@ -12,6 +12,26 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-heading);
+
+  /* Colores del escudo de la AD Lavadores */
+  --color-club-green: #017e30;
+  --color-club-green-dark: #013d17;
+  --color-club-red: #e5001c;
+  --color-club-gold: #d4ae2c;
+
+  /* La escala verde de Tailwind se sustituye por el verde del escudo para que
+     botones, enlaces y bordes de toda la app usen el color del club. */
+  --color-green-50: #effaf2;
+  --color-green-100: #d9f3e1;
+  --color-green-200: #b2e6c3;
+  --color-green-300: #7dd39d;
+  --color-green-400: #40b86f;
+  --color-green-500: #129a4a;
+  --color-green-600: #038a39;
+  --color-green-700: #017e30;
+  --color-green-800: #016426;
+  --color-green-900: #014f1f;
+  --color-green-950: #012b11;
 }
 
 body {
@@ -28,11 +48,11 @@ h3 {
 }
 
 .pitch-bg {
-  background-color: #f3f9f5;
+  background-color: #f4f9f5;
   background-image: repeating-linear-gradient(
     135deg,
-    rgba(21, 128, 61, 0.05) 0px,
-    rgba(21, 128, 61, 0.05) 36px,
+    rgba(1, 126, 48, 0.045) 0px,
+    rgba(1, 126, 48, 0.045) 36px,
     transparent 36px,
     transparent 72px
   );
@@ -40,7 +60,7 @@ h3 {
 
 .pitch-header {
   background-image:
-    linear-gradient(to right, #14532d, #166534 55%, #15803d),
+    linear-gradient(to right, #013d17, #01622a 55%, #017e30),
     repeating-linear-gradient(
       90deg,
       rgba(255, 255, 255, 0.05) 0px,
@@ -48,4 +68,27 @@ h3 {
       transparent 24px,
       transparent 48px
     );
+}
+
+/* Franja bajo la cabecera: el filete blanco y el campo rojo del escudo,
+   rematados con el dorado de la corona. */
+.club-stripe {
+  height: 8px;
+  background: linear-gradient(
+    to bottom,
+    #ffffff 0 2px,
+    var(--color-club-red) 2px 6px,
+    var(--color-club-gold) 6px 8px
+  );
+}
+
+/* Títulos de página con un subrayado corto en rojo del escudo. */
+.pitch-bg main h1::after {
+  content: "";
+  display: block;
+  width: 2.5rem;
+  height: 3px;
+  margin-top: 0.35rem;
+  border-radius: 9999px;
+  background: var(--color-club-red);
 }

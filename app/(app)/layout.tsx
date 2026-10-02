@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { signOut } from "@/lib/auth";
+import { NavLink } from "@/components/NavLink";
 
 // Todas las páginas de la app leen datos en vivo de la base de datos y
 // requieren sesión; nunca deben servirse como HTML estático prerenderizado.
@@ -25,10 +26,10 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             <Image
               src="/escudo.png"
               alt="Escudo AD Lavadores"
-              width={28}
-              height={40}
+              width={31}
+              height={44}
               priority
-              className="h-10 w-auto drop-shadow"
+              className="h-11 w-auto drop-shadow-md"
             />
             <span className="font-heading text-xl font-semibold tracking-wide text-white">
               AD Lavadores
@@ -58,16 +59,18 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         </div>
         <nav className="mx-auto flex max-w-5xl gap-1 overflow-x-auto px-4 pb-2 text-sm">
           {navItems.map((item) => (
-            <Link
+            <NavLink
               key={item.href}
               href={item.href}
-              className="whitespace-nowrap rounded-md px-3 py-1.5 font-medium text-green-50 hover:bg-white/15 hover:text-white"
+              className="whitespace-nowrap rounded-md px-3 py-1.5 font-medium"
+              activeClassName="bg-white/20 text-white shadow-[inset_0_-3px_0_var(--color-club-gold)]"
+              inactiveClassName="text-green-50 hover:bg-white/15 hover:text-white"
             >
               {item.label}
-            </Link>
+            </NavLink>
           ))}
         </nav>
-        <div className="h-1 bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400" />
+        <div className="club-stripe" />
       </header>
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
         {children}

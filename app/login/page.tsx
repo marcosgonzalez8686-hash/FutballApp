@@ -5,19 +5,21 @@ export default function LoginPage() {
   return (
     <main className="pitch-header flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg">
-        <div className="h-1.5 bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400" />
+        <div className="club-stripe" />
         <div className="p-6">
-          <h1 className="mb-6 flex items-center gap-3 font-heading text-2xl font-semibold tracking-wide text-gray-900">
+          <div className="mb-6 flex flex-col items-center gap-3 text-center">
             <Image
               src="/escudo.png"
               alt="Escudo AD Lavadores"
-              width={34}
-              height={48}
+              width={68}
+              height={96}
               priority
-              className="h-12 w-auto"
+              className="h-24 w-auto drop-shadow-md"
             />
-            AD Lavadores
-          </h1>
+            <h1 className="font-heading text-2xl font-semibold tracking-wide text-gray-900">
+              AD Lavadores
+            </h1>
+          </div>
           <LoginForm />
         </div>
       </div>
