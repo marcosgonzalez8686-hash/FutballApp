@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { signOut } from "@/lib/auth";
@@ -20,9 +21,19 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     <div className="pitch-bg flex min-h-screen flex-col">
       <header className="pitch-header shadow-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-          <span className="font-heading text-xl font-semibold tracking-wide text-white">
-            ⚽ Club Fútbol
-          </span>
+          <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/escudo.png"
+              alt="Escudo AD Lavadores"
+              width={28}
+              height={40}
+              priority
+              className="h-10 w-auto drop-shadow"
+            />
+            <span className="font-heading text-xl font-semibold tracking-wide text-white">
+              AD Lavadores
+            </span>
+          </Link>
           <div className="flex items-center gap-4">
             <Link
               href="/ajustes"

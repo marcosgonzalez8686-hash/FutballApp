@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { LoginForm } from "./LoginForm";
 
 export default function LoginPage() {
@@ -6,8 +7,16 @@ export default function LoginPage() {
       <div className="w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg">
         <div className="h-1.5 bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400" />
         <div className="p-6">
-          <h1 className="mb-6 font-heading text-2xl font-semibold tracking-wide text-gray-900">
-            ⚽ Club Fútbol
+          <h1 className="mb-6 flex items-center gap-3 font-heading text-2xl font-semibold tracking-wide text-gray-900">
+            <Image
+              src="/escudo.png"
+              alt="Escudo AD Lavadores"
+              width={34}
+              height={48}
+              priority
+              className="h-12 w-auto"
+            />
+            AD Lavadores
           </h1>
           <LoginForm />
         </div>
