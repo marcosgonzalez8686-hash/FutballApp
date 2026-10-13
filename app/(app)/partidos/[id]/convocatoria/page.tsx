@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { getWeekRange } from "@/lib/format";
 import { ConvocatoriaForm } from "./ConvocatoriaForm";
 import { saveCallups } from "../../actions";
 
@@ -27,22 +26,35 @@ export default async function ConvocatoriaPage({
     orderBy: { name: "asc" },
   });
 
-  const { start, end } = getWeekRange(match.date);
-  const weekTrainings = await prisma.training.findMany({
-    where: { date: { gte: start, lt: end } },
+  // Entrenamientos desde el último partido oficial (Liga o Copa) anterior a
+  // este; si no hay ninguno, desde el inicio de la temporada del partido.
+  const lastOfficialMatch = await prisma.match.findFirst({
+    where: {
+      id: { not: match.id },
+      competition: { in: ["LIGA", "COPA"] },
+      date: { lt: match.date },
+    },
+    orderBy: { date: "desc" },
+    select: { date: true },
+  });
+
+  const recentTrainings = await prisma.training.findMany({
+    where: lastOfficialMatch
+      ? { date: { gt: lastOfficialMatch.date, lt: match.date } }
+      : { seasonId: match.seasonId, date: { lt: match.date } },
     include: { attendances: true },
   });
 
-  function weeklyAttendanceFor(playerId: string) {
-    if (weekTrainings.length === 0) return null;
-    const attended = weekTrainings.filter((training) =>
+  function attendanceFor(playerId: string) {
+    if (recentTrainings.length === 0) return null;
+    const attended = recentTrainings.filter((training) =>
       training.attendances.some(
         (a) =>
           a.playerId === playerId &&
           (a.status === "CONFIRMADO" || a.status === "TARDE")
       )
     ).length;
-    return { attended, total: weekTrainings.length };
+    return { attended, total: recentTrainings.length };
   }
 
   const callupByPlayer = new Map(match.callups.map((c) => [c.playerId, c]));
@@ -58,7 +70,7 @@ export default async function ConvocatoriaPage({
     id: player.id,
     name: player.name,
     called: callupByPlayer.get(player.id)?.called ?? false,
-    weeklyAttendance: weeklyAttendanceFor(player.id),
+    attendance: attendanceFor(player.id),
   }));
 
   const saveCallupsWithId = saveCallups.bind(null, id);
