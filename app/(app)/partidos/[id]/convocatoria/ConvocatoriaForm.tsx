@@ -6,7 +6,7 @@ type PlayerRow = {
   id: string;
   name: string;
   called: boolean;
-  weeklyAttendance: { attended: number; total: number } | null;
+  attendance: { attended: number; total: number } | null;
 };
 
 export function ConvocatoriaForm({
@@ -44,10 +44,10 @@ export function ConvocatoriaForm({
               className="h-4 w-4 rounded border-gray-300"
             />
             {player.name}
-            {player.weeklyAttendance && (
+            {player.attendance && (
               <span className="text-xs text-gray-400">
-                ({player.weeklyAttendance.attended}/
-                {player.weeklyAttendance.total} entrenos esta semana)
+                ({player.attendance.attended}/
+                {player.attendance.total} entrenos desde el último partido)
               </span>
             )}
           </label>
